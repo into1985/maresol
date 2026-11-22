@@ -1,0 +1,21 @@
+{
+  "name": "maresol-memoshome",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+  },
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "lint:tokens": "python scripts/lint-tokens.py",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1",
+    "nuxt": "^4.6.1",
+    "vue": "^3.5.44"
+  }
+}

@@ -1,0 +1,19 @@
+# Whitelist: repo saab ainult rakenduse lähtekoodi ja kasutatud avalikud failid.
+/*
+!/.gitignore
+!/.node-version
+!/package.json
+!/package-lock.json
+!/nuxt.config.ts
+!/tsconfig.json
+!/app/
+!/public/
+!/scripts/
+
+node_modules/
+.nuxt/
+.output/
+.data/
+.env
+.env.*
+*.log

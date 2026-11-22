@@ -1,0 +1,104 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "#skippern",
+      "name": "Skippern Yachts AS",
+      "url": "https://skippern.yachts/",
+      "telephone": "+47 900 81 217",
+      "email": "kontakt@skippern.yachts",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Pastor Løkens vei 3",
+        "postalCode": "1410",
+        "addressLocality": "Kolbotn",
+        "addressCountry": "NO"
+      }
+    },
+    {
+      "@type": "RealEstateAgent",
+      "@id": "#maresol",
+      "name": "Maresol",
+      "url": "https://maresol.eu/",
+      "slogan": "Where life finds its place.",
+      "parentOrganization": { "@id": "#skippern" }
+    },
+    {
+      "@type": "Organization",
+      "@id": "#memoshome",
+      "name": "Memoshome",
+      "url": "https://www.memoshome.com/",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Alanya",
+        "addressRegion": "Antalya",
+        "addressCountry": "TR"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "#webpage",
+      "name": "Homes in Alanya, Built and Managed by Memoshome",
+      "description": "Memoshome builds homes in Oba and around Alanya, and looks after them once they are yours. Four selected projects, and how buying and owning work in Turkey.",
+      "inLanguage": "en-GB",
+      "publisher": { "@id": "#maresol" },
+      "about": { "@id": "#memoshome" },
+      "mainEntity": { "@id": "#homes" }
+    },
+    {
+      "@type": "ItemList",
+      "@id": "#homes",
+      "name": "Selected homes",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "item": {
+            "@type": "ApartmentComplex",
+            "name": "Renda Park",
+            "numberOfAccommodationUnits": 39,
+            "address": { "@type": "PostalAddress", "addressLocality": "Oba, Alanya", "addressRegion": "Antalya", "addressCountry": "TR" },
+            "amenityFeature": [
+              { "@type": "LocationFeatureSpecification", "name": "Indoor pool", "value": true },
+              { "@type": "LocationFeatureSpecification", "name": "Outdoor pool", "value": true },
+              { "@type": "LocationFeatureSpecification", "name": "Hamam", "value": true },
+              { "@type": "LocationFeatureSpecification", "name": "Massage rooms", "value": true },
+              { "@type": "LocationFeatureSpecification", "name": "Fitness centre", "value": true }
+            ]
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "item": {
+            "@type": "ApartmentComplex",
+            "name": "Hermes Garden",
+            "numberOfAccommodationUnits": 77,
+            "address": { "@type": "PostalAddress", "addressLocality": "Oba, Alanya", "addressRegion": "Antalya", "addressCountry": "TR" }
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "item": {
+            "@type": "ApartmentComplex",
+            "name": "Oba Zenith View",
+            "numberOfAccommodationUnits": 44,
+            "address": { "@type": "PostalAddress", "addressLocality": "Oba, Alanya", "addressRegion": "Antalya", "addressCountry": "TR" }
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "item": {
+            "@type": "Residence",
+            "name": "Prada Villas",
+            "description": "Sixteen villas on a hilltop, each with its own infinity pool and heated jacuzzi.",
+            "address": { "@type": "PostalAddress", "addressLocality": "Bektaş, Alanya", "addressRegion": "Antalya", "addressCountry": "TR" }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,131 @@
+/* MARESOL × Memoshome: tokenid. AINUS koht, kus tohib olla toorväärtus (px, rem, vw, hex, ms, z-index).
+   Kõik muu CSS (base.css, komponendid, demod) kasutab ainult neid tokeneid.
+   Reeglid: DESIGN-SYSTEM.md. Kontroll: python scripts/lint-tokens.py */
+
+/* ---------- Fondid (lukus 2026-11-20). Kadudeta woff2, failid public/font/ ---------- */
+@font-face { font-family: "MS Kelmitha"; font-weight: 200; font-display: swap; src: url("/font/KelmithaCntr-ExtraLight.woff2") format("woff2"); }
+@font-face { font-family: "MS Vontica"; font-weight: 300; font-display: swap; src: url("/font/VonticaSans-Light.woff2") format("woff2"); }
+@font-face { font-family: "MS Vontica"; font-weight: 400; font-display: swap; src: url("/font/VonticaSans-Regular.woff2") format("woff2"); }
+@font-face { font-family: "MS Lenia"; font-weight: 500; font-display: swap; src: url("/font/LeniaSoft-Medium.woff2") format("woff2"); }
+
+:root {
+  /* ---------- Värv: „Kivi ja meretint", suletud hulk ---------- */
+  --ground: #F1F0EB;           /* L* 94,7 — lehe taust */
+  --surface: #E3E0D7;          /* L* 89,2 — pinnad, kaardiala, foto taust */
+  --ink: #15292B;              /* merepõhja tumeroheline: kogu tekst, põhinupp */
+  --soft: #56635F;             /* teisejärguline tekst, sildid */
+  --accent: #5B8388;           /* Maresoli toon: sektsiooni 7 riba, valik, lingijoon, aktiivne olek */
+  --on-accent: var(--ground);  /* aktsendil ainult suur tekst (≥ 24 px) ja kontuurnupp: kontrast ~3,6 : 1 */
+  --on-photo: var(--ground);   /* tekst fotol */
+  --hover: var(--soft);
+  --rule: color-mix(in srgb, var(--ink) 16%, transparent);
+  --dim: color-mix(in srgb, var(--ink) 55%, transparent);     /* overlay'de tumendus */
+  --scrim-top: rgb(0 0 0 / .62);                              /* foto-scrim: matt must + alpha, täislaiuses */
+  --scrim-mid: rgb(0 0 0 / .38);
+  --scrim-end: rgb(0 0 0 / 0);
+  --float: 0 .75rem 1.75rem -.75rem color-mix(in srgb, var(--ink) 45%, transparent);   /* hõljuv kaardimärk (kasutaja 2026-11-20: õrn vari) */
+  --logo-on-accent: brightness(0) invert(1);                  /* valge logo aktsendiribal (copy, sektsioon 7) */
+  --mark-on-accent: color-mix(in srgb, var(--ground) 4%, var(--accent));   /* vaevu nähtav logomärk aktsendil (More demo 2026-11-22) */
+  --mark-h: 135%;                                             /* märgi kõrgus riba kõrgusest, serv lõikab */
+  --mark-shift: 18%;                                          /* märgi nihe riba alumisest servast välja */
+
+  /* ---------- Tüpograafia: perekonnad ja kaalud ---------- */
+  --f-display: "MS Kelmitha", serif;    /* pealkirjad, hind, menüü 200 */
+  --f-body: "MS Vontica", sans-serif;   /* lead 300, body 400 */
+  --f-label: "MS Lenia", sans-serif;    /* sildid, nupud 500, suurtähed */
+  --w-extralight: 200;
+  --w-light: 300;
+  --w-regular: 400;
+  --w-medium: 500;
+
+  /* ---------- Tüpograafia: suurused (rollid, vt DESIGN-SYSTEM.md) ---------- */
+  --t-display: clamp(2.75rem, 4.6vw, 5.75rem);       /* hero ja kontakti pealkiri */
+  --t-h2: clamp(2.125rem, 3vw, 3.625rem);
+  --t-h3: clamp(1.625rem, 2vw, 2.375rem);            /* kodu nimi kaardil, ploki pealkiri */
+  --t-price: clamp(1.375rem, 1.5vw, 1.75rem);
+  --t-lead: clamp(1.125rem, .7vw + .8rem, 1.4375rem);
+  --t-band: clamp(1.5rem, .7vw + 1.1rem, 1.625rem);   /* tekst aktsendipinnal: alati suur (≥ 24 px) */
+  --t-body: clamp(1rem, .25vw + .95rem, 1.125rem);
+  --t-note: .875rem;
+  --t-label: clamp(.625rem, .2vw + .5625rem, .75rem);
+  --t-button: var(--t-label);                                  /* nupu silt = sildi suurus ja tähevahe (kasutaja 2026-11-20) */
+  /* menüü: 5 linki + Enquire + kontakt; sõltub laiusest ja kõrgusest (navigatsioon-ja-cta.md). Kalibreeritakse menüü demos. */
+  --t-menu: clamp(1.75rem, min(4.4vw, (100svh - 2 * (var(--bar-top) + var(--bar-h)) - 13rem) / 8), 5rem);   /* 13rem = allkirjaplokk (nimi, kontaktid, Enquire) */
+
+  /* ---------- Tüpograafia: reavahed ja tähevahed ---------- */
+  --lh-display: 1.02;
+  --lh-tight: 1.04;
+  --lh-h3: 1.1;
+  --lh-label: 1.5;
+  --lh-lead: 1.45;
+  --lh-note: 1.5;
+  --lh-body: 1.6;
+  --lh-one: 1;
+  --ls-0: 0;
+  --ls-display: -.015em;
+  --ls-label: .07em;                                           /* poolitatud 2026-11-20 (kasutaja: .14em liiga hõre, AI-klišee) */
+
+  /* ---------- Paigutus ---------- */
+  --edge: clamp(1rem, 4.5vw, 5rem);
+  --content-max: 90rem;                                        /* lagi 1440 px, ei kasva edasi */
+  --pad-x: max(var(--edge), calc((100% - var(--content-max)) / 2));
+  --content-narrow: 72rem;                                     /* kitsam raam sektsioonile, mis seda kannab (rütm, kasutaja 2026-11-20) */
+  --pad-x-narrow: max(var(--edge), calc((100% - var(--content-narrow)) / 2));
+  --measure: 60ch;
+  --measure-lead: 30em;
+  --cols: 12;
+  --hair: 1px;
+  --scrollbar-w: .625rem;
+
+  /* ---------- Vahed ---------- */
+  --bar-top: clamp(1rem, 2vw, 1.8rem);                         /* päis ülaservast */
+  --bar-h: clamp(28px, 2.4vw, 44px);                           /* logo kõrgus (lagi 38 → 44, kasutaja 2026-11-22) */
+  --bar-gap: clamp(2.5rem, 7vh, 9rem);
+  --frame-y: calc(var(--bar-top) + var(--bar-h) + var(--bar-gap));   /* täisekraani ploki ülemine = alumine vahe */
+  --sec: clamp(4.5rem, 6vw + 7vh, 11rem);                      /* sektsiooni ülemine ja alumine vahe */
+  --head-gap: clamp(2.4rem, 2.5vw + 2.5vh, 5rem);              /* pealkiri → plokk */
+  --title-lead: clamp(1rem, 1.5vw, 1.5rem);                    /* pealkiri → oma lõik */
+  --title-text: var(--s-3);                                    /* alapealkiri t-h3 → oma tekst (Ownership, Homes; kasutaja 2026-11-22) */
+  --gutter: clamp(1rem, 3.34vw, 3rem);                         /* veergude vahe */
+  --gap: clamp(1rem, 2vw, 2rem);
+  --s-0: .125rem;
+  --s-1: .25rem;
+  --s-2: .5rem;
+  --s-3: .75rem;
+  --s-4: 1rem;
+
+  /* ---------- Juhtnupud ---------- */
+  --hit: 2.75rem;                                              /* väikseim klikkpind 44 px */
+  --icon: 1.375rem;                                            /* X-ikoon 22 px (sulgemine) */
+  --menu-card: 34rem;                                          /* menüükaardi max laius (demo A) */
+  --blur: 6px;                                                 /* overlay-tumenduse hägu (backdrop-filter) */
+  --sheet-w: 36rem;                                           /* päringukaardi / -paneeli max laius */
+  --btn-h: clamp(3.25rem, 3.6vw, 4.125rem);
+  --btn-px: clamp(3em, 4vw, 6.5em);
+  --dur-ui: .3s;
+  --ease-ui: cubic-bezier(.22, 1, .36, 1);
+
+  /* ---------- Pildi küljesuhted ---------- */
+  --r-landscape: 3 / 2;
+  --r-wide: 16 / 9;
+  --hero-max: 120rem;                                       /* hero kompositsiooni lagi 1920 px (kasutaja 2026-11-22) */
+  --pad-x-hero: max(var(--edge), calc((min(100%, var(--hero-max)) - var(--content-max)) / 2));   /* padding-% = lõigu laiusest, mitte raami: arvuta raami laiusega */
+  --hero-h: min(100svh, calc(min(100vw, var(--hero-max)) / 1.6));   /* hero kõrgus ≤ laius / 1,6 */
+  /* Hero fotode veerujooned: joon(n) = --hero-px + (n − 1) × --hero-step. Raami laiusest (vw), sest % laheneks absoluutse foto juures valest kastist. */
+  --hero-px: max(var(--edge), calc((min(100vw, var(--hero-max)) - var(--content-max)) / 2));
+  --hero-col: calc((min(100vw, var(--hero-max)) - 2 * var(--hero-px) - (var(--cols) - 1) * var(--gutter)) / var(--cols));
+  --hero-step: calc(var(--hero-col) + var(--gutter));
+  --hero-small: calc(var(--hero-step) + var(--gutter));    /* hero väikesed püstfotod (villa, bassein) */
+  --hero-shift: calc(.6 * max(0px, calc((100vw - var(--hero-max)) / 2)));   /* > 1920 px: välimised hero fotod liiguvad 60 % külgruumist servade poole (kasutaja 2026-11-22, demo A „Hajutus"); ≤ 1920 = 0 */
+  --r-screen: 16 / 10;                                      /* Alanya foto (kasutaja 2026-11-22) */
+  --r-portrait: 4 / 5;
+  --r-tall: 3 / 4;
+  --r-pano: 19 / 5;                                         /* madal merepanoraam (More, kasutaja kavand 2026-11-21) */
+  --sticky-photo-w: calc(78svh * 4 / 5);                  /* kleepuva püstfoto (4 : 5) laius, kõrgus ≤ 78 svh (Ownership 2026-11-22) */
+
+  /* ---------- Kihid ---------- */
+  --z-content: 1;
+  --z-header: 10;
+  --z-overlay: 40;      /* menüü, päring */
+  --z-close: 60;
+}
