@@ -100,7 +100,7 @@ onBeforeUnmount(() => { window.removeEventListener('keydown', onKey); document.r
           </div>
           <div class="send">
             <button class="btn btn--solid t-button" type="submit">Send</button>
-            <p class="notice t-note is-soft">We use your details only to reply to your enquiry. <a href="/privacy-policy" target="_blank">Privacy policy</a></p>
+            <p class="notice t-note is-soft">We use your details only to reply to your enquiry. <NuxtLink to="/privacy-policy" @click="setOpen(false)">Privacy policy</NuxtLink></p>
           </div>
         </form>
         <p v-else class="thanks t-h3" role="status">Thank you. Your enquiry has been received.</p>
@@ -160,7 +160,9 @@ a { color: inherit; }
 .send { display: flex; align-items: center; justify-content: space-between; gap: var(--gutter); margin-top: var(--title-lead); }
 .send .btn { flex: none; }
 .notice { margin: 0; flex: 1; text-align: right; }   /* teavitus, mitte nõusoleku linnuke: GDPR alus = inimese enda palve */
-.notice a { color: inherit; text-decoration-color: var(--accent); text-underline-offset: .25em; }
+.notice a { color: inherit; text-decoration-color: var(--accent); text-underline-offset: .25em; transition: color var(--dur-ui) var(--ease-ui), text-decoration-color var(--dur-ui) var(--ease-ui); }
+/* hover nagu footeri Privacy policy: joon tuhmub liikumiseta ära, kiri aktsent (kasutaja 2026-11-23) */
+@media (hover: hover) and (pointer: fine) { .notice a:hover { color: var(--accent); text-decoration-color: transparent; } }
 .thanks { max-width: var(--measure-lead); }
 
 /* ---------- väike või madal ekraan: ilma suurte vahedeta ---------- */

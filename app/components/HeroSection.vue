@@ -29,7 +29,7 @@ const photos = [
         <h1 id="hero-title" class="t-display">A home in Alanya, and someone to look after it</h1>
         <div class="hero-lead title-lead">
           <p class="t-body measure">{{ lead }}</p>
-          <button class="btn btn--line t-button" type="button" data-enquire>Enquire</button>
+          <button class="btn btn--line btn--arrow t-button" type="button" data-enquire><span class="btn-t">Enquire<span class="btn-a" aria-hidden="true">→</span></span></button>
         </div>
       </div>
     </div>

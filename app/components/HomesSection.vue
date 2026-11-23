@@ -30,7 +30,7 @@ const kinds = [
           </div>
           <h3 class="t-h3 a-title"><span class="ln">{{ k.lines[0] }}</span> <span class="ln">{{ k.lines[1] }}</span></h3>
           <p class="t-body title-text">{{ k.text }}</p>
-          <p class="t-body ex"><a class="link" href="#" @click.prevent>{{ k.cta }} <span aria-hidden="true">→</span></a></p>
+          <p class="t-body ex"><a class="link u-link" href="#" @click.prevent><span>{{ k.cta }} <span class="arr" aria-hidden="true">→</span></span></a></p>
         </li>
       </ul>
     </div>
@@ -50,7 +50,12 @@ ul { padding: 0; list-style: none; }
 .rule { display: block; width: var(--head-gap); margin-block: var(--head-gap) var(--title-lead); border-top: var(--hair) solid var(--rule); }
 .kinds { grid-column: 5 / 13; padding-left: var(--gutter); border-left: var(--hair) solid var(--rule); }
 .ex { margin-top: var(--title-lead); }
-.link { color: var(--ink); text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: .3em; text-decoration-thickness: var(--hair); cursor: pointer; }
+.link { color: var(--accent); cursor: pointer; }   /* joon: base.css .u-link; hoveril siin kiri ink + nool paremale (kasutaja 2026-11-23) */
+.arr { display: inline-block; transition: translate var(--dur-line) var(--ease-ui); }
+@media (hover: hover) and (pointer: fine) {
+  .link:hover { color: var(--ink); }
+  .link:hover .arr { translate: var(--arrow-shift) 0; }
+}
 
 /* „Astmed": fotod kõrgenevad, alaservad ühel joonel */
 .a { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: auto auto auto auto; column-gap: var(--gutter); }

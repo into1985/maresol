@@ -13,7 +13,7 @@ const url = 'https://maresol.eu/'
       <svg class="d-mark" viewBox="0 0 382 222" aria-hidden="true" focusable="false"><use href="/assets/maresol-mark.svg#m" /></svg>
       <div class="d-text">
         <h2 id="more-title" class="t-display">Where life finds its place.</h2>
-        <a class="btn btn--line t-button" :href="url" target="_blank" rel="noopener noreferrer">See all homes on Maresol</a>
+        <a class="btn btn--line btn--arrow t-button" :href="url" target="_blank" rel="noopener noreferrer"><span class="btn-t">See all homes on Maresol<span class="btn-a" aria-hidden="true">→</span></span></a>
       </div>
     </div>
   </section>
@@ -26,7 +26,7 @@ h2 { margin-block: 0; }
 .d-mark { position: absolute; right: 0; bottom: 0; height: var(--mark-h); width: auto; aspect-ratio: 382 / 222; translate: var(--mark-shift) var(--mark-shift); color: var(--mark-on-accent); }
 .d-text { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; }
 .d-text .btn { margin-top: calc(2 * var(--title-lead)); }   /* sama vahe kui hero lõik → Enquire (kasutaja 2026-11-22) */
-.d .btn--line { color: var(--on-accent); }
+.d .btn--line { color: var(--on-accent); }   /* hover: base.css .btn--arrow liikumine; värv jääb (scoped reegel on tugevam kui .btn--arrow:hover) */
 
 @media (max-width: 900px) {
   .d { margin-inline: calc(-1 * var(--pad-x)); padding-inline: var(--pad-x); }   /* servast servani */

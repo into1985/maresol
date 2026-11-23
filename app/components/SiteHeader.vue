@@ -79,30 +79,30 @@ onBeforeUnmount(() => { window.removeEventListener('scroll', onScroll); window.r
   <div class="site-nav" :class="{ 'is-open': open, 'is-scrolled': scrolled }">
     <header class="site-header">
       <nav class="links" aria-label="Sections">
-        <a v-for="l in links" :key="l.id" class="t-label" :href="hrefOf(l.id)" :aria-current="active === l.id ? 'true' : undefined">{{ l.label }}</a>
+        <a v-for="l in links" :key="l.id" class="t-label" :href="hrefOf(l.id)" :aria-current="active === l.id ? 'true' : undefined"><RollText :text="l.label" /></a>
       </nav>
-      <NuxtLink class="logo" to="/" @click="toTop"><img src="/assets/maresol-logo.svg" alt="Maresol" width="392" height="326" /></NuxtLink>
+      <NuxtLink class="logo" to="/" @click="toTop"><img src="/assets/maresol-logo-header.webp" alt="Maresol" width="213" height="176" /></NuxtLink>
       <div class="actions">
-        <p class="lang t-label"><a href="#" aria-current="true" @click.prevent>EN</a> <span aria-hidden="true">/</span> <a href="#" @click.prevent>NO</a></p>
+        <p class="lang t-label"><a href="#" aria-current="true" @click.prevent><RollText text="EN" /></a> <span aria-hidden="true">/</span> <a href="#" @click.prevent><RollText text="NO" /></a></p>
         <div class="contact">
-          <button ref="trigger" type="button" class="trigger t-label" :aria-expanded="card" aria-controls="contact-card" @click="setCard(!card)">Contact</button>
+          <button ref="trigger" type="button" class="trigger t-label" :aria-expanded="card" aria-controls="contact-card" @click="setCard(!card)"><RollText text="Contact" /></button>
           <div id="contact-card" ref="cardEl" class="card" :class="{ 'is-on': card }" role="dialog" aria-label="Contact Glenn Spydslaug" tabindex="-1" :inert="!card">
             <figure class="card-photo photo"><img src="/images/content/glenn.webp" alt="Glenn Spydslaug" width="1122" height="1402" loading="lazy" decoding="async" /></figure>
             <div class="card-body">
               <p class="t-h3">Glenn Spydslaug</p>
               <p class="t-body is-soft role">Real estate agent</p>
               <p class="reach title-lead">
-                <a class="t-body" href="tel:+4745818574">+47 458 18 574</a>
-                <a class="t-body" href="mailto:glenn@maresol.eu">glenn@maresol.eu</a>
+                <a class="t-body u-link" href="tel:+4745818574"><span>+47 458 18 574</span></a>
+                <a class="t-body u-link" href="mailto:glenn@maresol.eu"><span>glenn@maresol.eu</span></a>
               </p>
-              <button class="send t-button" type="button" data-enquire @click="setCard(false, false)">Send an enquiry</button>
+              <button class="send t-button u-link" type="button" data-enquire @click="setCard(false, false)"><span>Send an enquiry</span></button>
             </div>
           </div>
         </div>
       </div>
-      <p class="open-lang lang t-label"><a href="#" aria-current="true" @click.prevent>EN</a> <span aria-hidden="true">/</span> <a href="#" @click.prevent>NO</a></p>
+      <p class="open-lang lang t-label"><a href="#" aria-current="true" @click.prevent><RollText text="EN" /></a> <span aria-hidden="true">/</span> <a href="#" @click.prevent><RollText text="NO" /></a></p>
       <button class="menu t-button" type="button" :aria-expanded="open" aria-controls="menu-panel" :aria-label="open ? 'Close' : undefined" @click="setOpen(!open)">
-        <span v-if="!open">Menu</span>
+        <RollText v-if="!open" text="Menu" />
         <svg v-else class="x" viewBox="0 0 22 22" aria-hidden="true"><path d="M4 4 18 18M18 4 4 18" /></svg>
       </button>
     </header>
@@ -119,11 +119,11 @@ onBeforeUnmount(() => { window.removeEventListener('scroll', onScroll); window.r
           <div>
             <p class="t-h3">Glenn Spydslaug</p>
             <p class="reach title-lead">
-              <a class="t-body" href="tel:+4745818574">+47 458 18 574</a>
-              <a class="t-body" href="mailto:glenn@maresol.eu">glenn@maresol.eu</a>
+              <a class="t-body u-link" href="tel:+4745818574"><span>+47 458 18 574</span></a>
+              <a class="t-body u-link" href="mailto:glenn@maresol.eu"><span>glenn@maresol.eu</span></a>
             </p>
           </div>
-          <button class="btn btn--line t-button" type="button" data-enquire @click="setOpen(false)">Enquire</button>
+          <button class="btn btn--line btn--arrow t-button" type="button" data-enquire @click="setOpen(false)"><span class="btn-t">Enquire<span class="btn-a" aria-hidden="true">→</span></span></button>
         </div>
       </div>
     </div>
@@ -152,6 +152,10 @@ a { color: inherit; }
 .actions { grid-column: 3; justify-self: end; display: flex; align-items: center; gap: var(--gutter); }
 .lang { display: flex; gap: var(--s-2); color: var(--soft); }
 .lang a[aria-current] { color: var(--ink); }
+/* navbari hover (kasutaja 2026-11-23): sildi rull (RollText) + kiri sujuvalt aktsendiks; aktiivsel lingil hoverit ega klikikursorit pole */
+.links a, .lang a, .trigger, .menu { transition: color var(--dur-line) var(--ease-ui); }
+.links a[aria-current], .lang a[aria-current] { cursor: default; }
+@media (hover: hover) and (pointer: fine) { :is(.links a, .lang a, .trigger, .menu):not([aria-current]):hover { color: var(--accent); } }
 /* kontakt: tekstilink nagu vasakpoolsed lingid; avatult aktsent */
 .contact { position: relative; }
 .trigger { min-height: var(--hit); padding-inline: var(--s-2); margin-right: calc(-1 * var(--s-2)); color: var(--ink); }
@@ -172,7 +176,8 @@ a { color: inherit; }
 .card-body { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; }
 .role { margin-top: var(--s-1); }
 /* päring tekstitegevusena: hero Enquire jääb ainus kastiga nupp */
-.send { margin-top: var(--head-gap); min-height: var(--hit); color: var(--ink); text-decoration-line: underline; text-decoration-color: var(--accent); text-decoration-thickness: var(--hair); text-underline-offset: .5em; }
+.send { margin-top: var(--head-gap); min-height: var(--hit); color: var(--ink); }   /* joon ja hover: base.css .u-link */
+@media (hover: hover) and (pointer: fine) { .send:hover { color: var(--accent); } }   /* scoped .send värv kirjutas .u-link:hover üle */
 .menu { grid-column: 3; justify-self: end; display: none; align-items: center; justify-content: center; min-height: var(--hit); min-width: var(--hit); padding-inline: var(--s-2); margin-right: calc(-1 * var(--s-2)); }
 .x { width: var(--icon); height: var(--icon); fill: none; stroke: currentColor; stroke-width: 1.5; }
 .links a[aria-current], .list a[aria-current] { color: var(--accent); }
@@ -201,13 +206,15 @@ a { color: inherit; }
 .panel-photo img.is-on { opacity: 1; }
 .panel-body { grid-column: 7 / 13; }
 .list { display: flex; flex-direction: column; }
-.list a { text-decoration: none; }
+.list a { text-decoration: none; align-self: flex-start; transition: color var(--dur-line) var(--ease-ui), translate var(--dur-line) var(--ease-ui); }
+/* hover (kasutaja 2026-11-23): kiri sujuvalt --soft ja veidi paremale; aktiivsel lingil hoverit ega klikikursorit pole */
+.list a[aria-current] { cursor: default; }
+@media (hover: hover) and (pointer: fine) { .list a:not([aria-current]):hover { color: var(--soft); translate: var(--menu-shift) 0; } }
 /* vahed tokenitest: lingid → Glenn --head-gap, nimi → kontaktid --title-lead, kontaktid → Enquire --head-gap */
 .foot { display: flex; flex-direction: column; align-items: flex-start; gap: var(--head-gap); margin-top: var(--head-gap); }
 .title-lead { margin-top: var(--title-lead); }
 .reach { display: flex; flex-direction: column; align-items: flex-start; }
-/* pidev peenike aktsentjoon (skip-ink murdis joone p / @ kohal) */
-.reach a { text-decoration-line: underline; text-decoration-color: var(--accent); text-decoration-thickness: var(--hair); text-decoration-skip-ink: none; text-underline-offset: .25em; }
+/* joon ja hover: base.css .u-link */
 
 @media (max-width: 900px) {
   .site-header { grid-template-columns: auto minmax(0, 1fr) auto; }

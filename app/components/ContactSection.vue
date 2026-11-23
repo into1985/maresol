@@ -21,8 +21,8 @@
           <p class="t-h3">Glenn Spydslaug</p>
           <p class="t-body is-soft role">Real estate agent</p>
           <p class="reach title-lead">
-            <a class="t-body" href="tel:+4745818574">+47 458 18 574</a>
-            <a class="t-body" href="mailto:glenn@maresol.eu">glenn@maresol.eu</a>
+            <a class="t-body u-link" href="tel:+4745818574"><span>+47 458 18 574</span></a>
+            <a class="t-body u-link" href="mailto:glenn@maresol.eu"><span>glenn@maresol.eu</span></a>
           </p>
           <button class="btn btn--solid t-button" type="button" data-enquire>Enquire</button>
         </div>
@@ -48,7 +48,6 @@ a { color: inherit; }
 .sign { grid-column: 10 / 13; align-self: center; }
 .role { margin-top: var(--s-1); }   /* nimi ja roll üks plokk */
 .reach { display: flex; flex-direction: column; align-items: flex-start; }
-.reach a { text-decoration-color: var(--accent); text-underline-offset: .2em; }
 .sign .btn { margin-top: var(--head-gap); }
 
 

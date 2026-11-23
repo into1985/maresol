@@ -66,6 +66,7 @@ button:focus, a:focus, [role="button"]:focus { outline: none; box-shadow: none; 
 /* ---------- Sektsiooniraam ---------- */
 .sec { padding-block: var(--sec); padding-inline: var(--pad-x); }
 .sec--flush-top { padding-top: 0; }          /* sama tooniga järgmine sektsioon: ainult üks --sec */
+.sec--flush-top[id] { scroll-margin-top: var(--sec); }   /* ankruhüppel sama õhk üleval kui ülemise paddinguga sektsioonil (Local Partner) */
 .sec--flush-bottom { padding-bottom: 0; }
 .sec--surface { background: var(--surface); }
 .sec--accent { background: var(--accent); color: var(--on-accent); }
@@ -94,8 +95,56 @@ button:focus, a:focus, [role="button"]:focus { outline: none; box-shadow: none; 
   text-decoration: none;
   transition: color var(--dur-ui) var(--ease-ui), background-color var(--dur-ui) var(--ease-ui), border-color var(--dur-ui) var(--ease-ui);
 }
-.btn--solid { background: var(--ink); border-color: var(--ink); color: var(--ground); }
+.btn--solid { background: var(--ink); border-color: var(--ink); color: var(--ground); position: relative; isolation: isolate; }
+/* hover (kasutaja 2026-11-23): aktsentpind pühib vasakult paremale sisse; hover out tint taastub samuti vasakult paremale
+   (kihi transform-origin vahetub: sisse vasakult, välja paremale). Kiht katab ka piirjoone. */
+.btn--solid::before {
+  content: ''; position: absolute; inset: calc(-1 * var(--hair)); z-index: -1; background: var(--accent);
+  transform: scaleX(0); transform-origin: right; transition: transform var(--dur-line) var(--ease-ui);
+}
+@media (hover: hover) and (pointer: fine) {
+  .btn--solid:hover::before { transform: scaleX(1); transform-origin: left; }
+}
 .btn--line { color: var(--ink); }   /* peenjoonega kontuur, tint (referents: Send request; kasutaja: tumedam toon) */
+/* hover (kasutaja 2026-11-23, hero + menüü Enquire): piirjoon ja kiri sujuvalt aktsendiks, silt nihkub veidi vasakule
+   ja sildi lõpust libiseb nähtavale nool; nupu mõõdud ei muutu (nool absoluutne). */
+.btn--arrow { transition-duration: var(--dur-line); }
+.btn--arrow .btn-t { position: relative; display: inline-block; transition: translate var(--dur-line) var(--ease-ui); will-change: translate; }   /* püsiv kiht: kiri ei renderdu hoveri lõpus uuesti teise silumisega (värv „vajus" ink'i poole) */
+.btn--arrow .btn-a {
+  position: absolute; left: calc(100% + var(--btn-arrow-gap)); top: 50%; opacity: 0; translate: calc(-1 * var(--btn-arrow-gap)) -50%;
+  font-family: var(--f-body); font-weight: var(--w-regular); font-size: var(--t-body); line-height: 1; letter-spacing: var(--ls-0);   /* sama nool kui tekstilinkidel (t-body) */
+  transition: opacity var(--dur-line) var(--ease-ui), translate var(--dur-line) var(--ease-ui);
+}
+@media (hover: hover) and (pointer: fine) {
+  .btn--arrow:hover { color: var(--accent); }
+  .btn--arrow:hover .btn-t { translate: calc(-1 * var(--btn-arrow-shift)) 0; }
+  .btn--arrow:hover .btn-a { opacity: 1; translate: 0 -50%; }
+}
+
+/* ---------- Tekstilink (kontaktid, Send an enquiry, kodulingid): peenike aktsentjoon; hoveril joon kaob vasakult
+   paremale ja kiri muutub aktsendiks, hover out joon joonistub vasakult paremale tagasi (kasutaja 2026-11-23).
+   Joon on sisemise spani pseudo-element, et asukoht sõltuks kirjast, mitte lingi kasti kõrgusest. ---------- */
+.u-link { text-decoration: none; transition: color var(--dur-line) var(--ease-ui); }
+.u-link > span { position: relative; }
+.u-link > span::after {
+  content: ''; position: absolute; left: 0; right: 0; top: calc(100% + var(--line-gap)); height: var(--hair);
+  background: var(--accent); transform-origin: left; transition: transform var(--dur-line) var(--ease-ui);
+}
+@media (hover: hover) and (pointer: fine) {
+  .u-link:hover { color: var(--accent); }
+  .u-link:hover > span::after { transform: scaleX(0); transform-origin: right; }
+}
+
+/* ---------- Navbari sildi rull (RollText.vue): tähed maskis üles, samad tähed alt asemele; hover vanemalt,
+   aktiivsel ([aria-current]) mitte. ---------- */
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }   /* lint-ok: standardne ekraanilugeja-peitmine */
+.roll { display: inline-block; }
+.roll-v { display: inline-flex; overflow: clip; padding-block: var(--roll-gap); margin-block: calc(-1 * var(--roll-gap)); }
+.roll-c { position: relative; display: inline-block; white-space: pre; transition: translate var(--dur-line) var(--ease-ui); transition-delay: calc(var(--i) * var(--roll-step)); }
+.roll-c::after { content: attr(data-c); position: absolute; left: 0; top: calc(100% + var(--roll-gap)); }
+@media (hover: hover) and (pointer: fine) {
+  :not([aria-current]):hover > .roll .roll-c { translate: 0 calc(-100% - var(--roll-gap)); }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 0s !important; animation-duration: 0s !important; scroll-behavior: auto !important; }

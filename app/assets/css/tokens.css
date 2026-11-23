@@ -104,6 +104,14 @@
   --btn-px: clamp(3em, 4vw, 6.5em);
   --dur-ui: .3s;
   --ease-ui: cubic-bezier(.22, 1, .36, 1);
+  --dur-line: .5s;                                             /* tekstilingi joone kadumine / naasmine */
+  --roll-gap: .12em;                                           /* navbari rull: maski varu ja koopia kaugus */
+  --roll-step: 18ms;                                           /* navbari rull: tähtede vaheline nihe */
+  --menu-shift: .12em;                                         /* menüülink hoveril paremale */
+  --arrow-shift: .25em;                                        /* tekstilingi nool hoveril paremale */
+  --line-gap: .12em;                                           /* tekstilingi joon kirja alumisest servast */
+  --btn-arrow-gap: .5em;                                       /* kontuurnupu nool sildi lõpust (noole em = t-body) */
+  --btn-arrow-shift: calc(.64 * var(--t-body));                /* silt vasakule = (noole laius .78 + vahe .5) / 2 t-body-st, kompositsioon jääb keskele */
 
   /* ---------- Pildi küljesuhted ---------- */
   --r-landscape: 3 / 2;
