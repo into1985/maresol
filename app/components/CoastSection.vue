@@ -10,14 +10,22 @@ const airports = [
 const p1 = 'Oba is an established part of Alanya, a few kilometres east of the town centre, with the sea on one side and the Taurus foothills on the other. It is a place people live in, not only a holiday area: supermarkets, pharmacies, banks and bakeries sit alongside the cafés and restaurants, and there is a market every Monday.'
 const p2 = 'A promenade follows the beach for walking, running and cycling. Gyms, tennis and padel courts are close by, and the Alanyum shopping centre covers what the local shops do not. Depending on the home, much of this is within walking distance.'
 const note = 'Times by car vary with traffic and with where the home is. Transport from either airport can be arranged.'
+
+/* Faas 5 (MOTION.md, kinnitatud sõnavara): foto K2 · pealkiri · lõigud (teine +.2 s) · lennujaamade plokk tervikuna, igaüks oma triggeril */
+const title = ref<HTMLElement | null>(null)
+const photo = ref<HTMLElement | null>(null)
+const p1El = ref<HTMLElement | null>(null)
+const p2El = ref<HTMLElement | null>(null)
+const info = ref<HTMLElement | null>(null)
+useReveal(() => [photoUnit(photo.value!), textUnit([title.value!]), textUnit([p1El.value!, p2El.value!]), textUnit([info.value!])])
 </script>
 
 <template>
   <section id="alanya" class="cs sec sec--flush-top" aria-labelledby="coast-title">
     <div class="grid">
       <div class="a-left">
-        <h2 id="coast-title" class="t-h2">Oba and the coast around it</h2>
-        <div>
+        <h2 id="coast-title" ref="title" class="t-h2">Oba and the coast around it</h2>
+        <div ref="info" class="a-info">
           <span class="rule" aria-hidden="true" />
           <div v-for="a in airports" :key="a.name" class="a-air">
             <p class="t-label">{{ a.name }}</p>
@@ -27,9 +35,9 @@ const note = 'Times by car vary with traffic and with where the home is. Transpo
         </div>
       </div>
       <div class="a-right">
-        <figure class="photo a-photo"><img src="/images/content/alanya.webp" alt="The seafront promenade in Alanya, lined with palms and benches above the sea" width="1586" height="992" loading="lazy" decoding="async" /></figure>
-        <p class="t-lead a-p1">{{ p1 }}</p>
-        <p class="t-body title-lead">{{ p2 }}</p>
+        <figure ref="photo" class="photo a-photo"><img src="/images/content/alanya.webp" alt="The seafront promenade in Alanya, lined with palms and benches above the sea" width="1586" height="992" loading="lazy" decoding="async" /></figure>
+        <p ref="p1El" class="t-lead a-p1">{{ p1 }}</p>
+        <p ref="p2El" class="t-body title-lead">{{ p2 }}</p>
       </div>
     </div>
   </section>
@@ -52,8 +60,13 @@ figure { margin: 0; }
 .a-p1 { margin-top: var(--head-gap); }
 
 @media (max-width: 900px) {
-  .grid { grid-template-columns: minmax(0, 1fr); row-gap: var(--head-gap); }
+  .grid { grid-template-columns: minmax(0, 1fr); row-gap: 0; }
+  .a-right { margin-top: var(--title-gap); }   /* pealkiri → foto: ühine mobiilivahe */
+  .a-info { margin-top: var(--head-gap); }
   .a-left, .a-right { grid-column: 1; }
   .a-right { padding-left: 0; border-left: 0; }
+  /* lennujaamade plokk sektsiooni lõppu, mitte pealkirja alla (kasutaja 2026-11-23): pealkiri → foto + lõigud → lennujaamad */
+  .a-left { display: contents; }
+  .a-info { order: 1; }
 }
 </style>

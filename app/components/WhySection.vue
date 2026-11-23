@@ -7,23 +7,33 @@
    Mõlemad fotod ajutised; kasutaja vahetab väikese foto teemaga sobiva vastu (nt ehitusplats). */
 const p1 = 'We wanted a partner in Turkey that would still be there after the sale. Memoshome buys the land, develops and builds the homes, sells them, and manages the complexes once the owners have moved in. Since 2000, the company has built 48 projects in and around Alanya.'
 const p2 = 'Maresol is run by Skippern Yachts, so our own background is in yachts, where a good boat comes with a management company behind it. A home abroad needs the same: people on the ground who know the building, because they built it.'
+
+/* Faas 5 (MOTION.md, kinnitatud demo B 2026-11-23): suur foto · pealkiri + tekst · väike foto oma triggeril;
+   väike foto liigub kerimisel kiiremini (ankur = ruudustik, keskel nihe 0 → alaservad ühel joonel). */
+const grid = ref<HTMLElement | null>(null)
+const big = ref<HTMLElement | null>(null)
+const small = ref<HTMLElement | null>(null)
+const title = ref<HTMLElement | null>(null)
+const text = ref<HTMLElement | null>(null)
+useReveal(() => [photoUnit(big.value!), textUnit([title.value!, text.value!]), photoUnit(small.value!)])
+useDrift(() => (small.value && grid.value ? { el: small.value, anchor: grid.value } : null))
 </script>
 
 <template>
   <section id="memoshome" class="why sec" aria-labelledby="why-title">
-    <div class="why-grid">
-      <figure class="why-photo photo">
+    <div ref="grid" class="why-grid">
+      <figure ref="big" class="why-photo photo">
         <span class="why-ratio r-tall" aria-hidden="true"></span>
         <img src="/images/content/why-complex.webp" alt="A Memoshome villa in Alanya, with its pool and garden terrace" width="1122" height="1402" loading="lazy" decoding="async" />
       </figure>
       <div class="why-main">
-        <h2 id="why-title" class="t-h2">Why we chose Memoshome</h2>
-        <div class="why-text">
+        <h2 id="why-title" ref="title" class="t-h2">Why we chose Memoshome</h2>
+        <div ref="text" class="why-text">
           <p class="t-lead">{{ p1 }}</p>
           <p class="t-body title-lead">{{ p2 }}</p>
         </div>
       </div>
-      <figure class="why-small photo">
+      <figure ref="small" class="why-small photo">
         <img src="/images/content/developing.webp" alt="A Memoshome building site on the hillside in Alanya, with concrete pumps at work" width="1254" height="1254" loading="lazy" decoding="async" />
       </figure>
     </div>
@@ -44,14 +54,21 @@ p { margin-block: 0; }
 .why-main { grid-column: 5 / 10; grid-row: 1; padding-left: var(--gutter); display: flex; flex-direction: column; justify-content: flex-end; gap: var(--head-gap); }
 
 .why-small { grid-column: 11 / 13; grid-row: 1; align-self: end; aspect-ratio: 1; }
+/* kerimisnihe (useDrift, 2D translate murdosa-pikslites): oma kiht, muidu joonistati foto igal kaadril ümber ja
+   vana asukoha servadesse jäid rõhtsad jutid (kasutaja 2026-11-23). Sama tingimus mis useDrift-il. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .why-small { will-change: translate; }
+}
 
 /* Telefon ja kitsas tahvel: pealkiri, foto, tekst, väike foto üksteise all */
 @media (max-width: 900px) {
-  .why-grid { grid-template-columns: minmax(0, 1fr); row-gap: var(--head-gap); }
+  .why-grid { grid-template-columns: minmax(0, 1fr); }
+  .why-photo { margin-top: var(--title-gap); }   /* pealkiri → foto: ühine mobiilivahe */
+  .why-text, .why-small { margin-top: var(--head-gap); }
   .why-photo, .why-main, .why-small { grid-column: 1; grid-row: auto; }
   .why-main { display: contents; }
   .why-main h2 { order: -1; }
-  .why-photo { width: 78%; }
-  .why-small { width: 40%; justify-self: end; }
+  /* suur foto täislaiuses 3 : 4, sama mis Buying (kasutaja 2026-11-23; enne 78 %) */
+  .why-small { width: 40%; justify-self: start; will-change: auto; }   /* telefonis nihet pole → kihti pole vaja */   /* vasakul (kasutaja 2026-11-23) */
 }
 </style>

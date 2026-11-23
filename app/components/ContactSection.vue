@@ -6,6 +6,15 @@
    NB: lause t-lead on katsetus — kasutaja võib tahta tagasi t-h3 (tuletada meelde).
    Footer: SiteFooter.vue (© vasakul, Privacy policy → /privacy-policy paremal). Share puudub (see ei ole listing).
    Foto images/glenn.webp (päikeseprillideta portree oleks parem, küsida Glennilt). */
+
+/* Faas 5 (2026-11-23): rida ühe sündmusena nagu Purchase — portree K2, pealkiri +.4 s, lause +.2 s, allkiri plokina +.2 s.
+   Footer paigal (lehe viimane rida, kõrgel ekraanil 85 % joont ei saavutaks). ≤ 900 px järjekord pealkiri + lause, foto, allkiri; igaüks oma triggeril. */
+const title = ref<HTMLElement>(), lead = ref<HTMLElement>(), photo = ref<HTMLElement>(), sign = ref<HTMLElement>()
+useReveal(() => {
+  const pic = photoUnit(photo.value!)
+  if (matchMedia('(max-width: 900px)').matches) return [textUnit([title.value!, lead.value!]), pic, textUnit([sign.value!])]
+  return [groupUnit([pic, textUnit([title.value!, lead.value!, sign.value!])], 400, photo.value!)]
+})
 </script>
 
 <template>
@@ -13,11 +22,11 @@
     <div class="sec body">
       <div class="grid">
         <div class="text">
-          <h2 id="contact-title" class="t-h2">Start with a conversation</h2>
-          <p class="t-lead title-lead note">Every home is different, and so is what people want from one. If you are thinking about Alanya, I am happy to talk it through, whether you already have something in mind or are just starting to look.</p>
+          <h2 ref="title" id="contact-title" class="t-h2">Start with a conversation</h2>
+          <p ref="lead" class="t-lead title-lead note">Every home is different, and so is what people want from one. If you are thinking about Alanya, I am happy to talk it through, whether you already have something in mind or are just starting to look.</p>
         </div>
-        <figure class="portrait photo r-tall"><img src="/images/content/glenn.webp" alt="Glenn Spydslaug, real estate agent at Maresol" width="1122" height="1402" loading="lazy" decoding="async" /></figure>
-        <div class="sign">
+        <figure ref="photo" class="portrait photo r-tall"><img src="/images/content/glenn.webp" alt="Glenn Spydslaug, real estate agent at Maresol" width="1122" height="1402" loading="lazy" decoding="async" /></figure>
+        <div ref="sign" class="sign">
           <p class="t-h3">Glenn Spydslaug</p>
           <p class="t-body is-soft role">Real estate agent</p>
           <p class="reach title-lead">
@@ -54,8 +63,9 @@ a { color: inherit; }
 @media (max-width: 900px) {
   .grid { grid-template-columns: minmax(0, 1fr); }
   .text, .portrait, .sign { grid-column: 1; }
-  /* telefonis nägu enne sõnu: foto pealkirja kohal */
-  .portrait { width: 60%; margin-bottom: var(--head-gap); grid-row: 1; }
+  .text > .note { margin-top: var(--title-gap); }   /* pealkiri → lead: ühine mobiilivahe */
+  /* telefonis foto pealkirja + lause ja maakleri nime vahel (kasutaja 2026-11-23) */
+  .portrait { width: 60%; margin-top: var(--head-gap); }
   .sign { margin-top: var(--head-gap); }
 }
 </style>

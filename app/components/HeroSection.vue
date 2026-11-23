@@ -9,25 +9,36 @@
 const lead = 'We work with Memoshome, who build homes in Oba and the neighbouring parts of Alanya. Their team is there when you choose and buy, and stays with you after the keys are handed over.'
 
 const photos = [
-  { src: '/images/content/hero-apartment.webp', alt: 'A Memoshome residential building in Alanya', w: 1122, h: 1402, cls: 'pa', depth: 1 },
-  { src: '/images/content/hero-bedroom.webp', alt: 'A bedroom with a view towards the sea', w: 1586, h: 992, cls: 'pd', depth: 2 },
-  { src: '/images/content/hero-villa.webp', alt: 'A Memoshome villa in Alanya', w: 1122, h: 1402, cls: 'pv', depth: 3 },
-  { src: '/images/content/hero-livingroom.webp', alt: 'A living room opening onto a terrace above the sea', w: 1586, h: 992, cls: 'pl', depth: 2 },
-  { src: '/images/content/hero-pool.webp', alt: 'The pool at a Memoshome project', w: 1122, h: 1402, cls: 'pp', depth: 3 },
+  /* mdepth = avangu järjekord telefonis (ülemine paar enne, alumine koos tekstiga) */
+  { src: '/images/content/hero-apartment.webp', alt: 'A Memoshome residential building in Alanya', w: 1122, h: 1402, cls: 'pa', depth: 1, mdepth: 3 },
+  { src: '/images/content/hero-bedroom.webp', alt: 'A bedroom with a view towards the sea', w: 1586, h: 992, cls: 'pd', depth: 2, mdepth: 2 },
+  { src: '/images/content/hero-villa.webp', alt: 'A Memoshome villa in Alanya', w: 1122, h: 1402, cls: 'pv', depth: 3, mdepth: 1 },
+  { src: '/images/content/hero-livingroom.webp', alt: 'A living room opening onto a terrace above the sea', w: 1586, h: 992, cls: 'pl', depth: 2, mdepth: 3 },
+  { src: '/images/content/hero-pool.webp', alt: 'The pool at a Memoshome project', w: 1122, h: 1402, cls: 'pp', depth: 3, mdepth: 3 },
 ]
+
+/* Faas 5 (MOTION.md, kinnitatud demo 2026-11-23): avang laadimisel — fotod kaugemad enne (sügavus 1 → 3, samm .15 s),
+   pealkiri +.4 s, lead + Enquire +.2 s; kerides fotod sügavuse järgi lehest kiiremini üles. Vilkumise kaitse head'i skriptiga. */
+useHead({ script: [{ tagPosition: 'head', innerHTML: INTRO_GUARD }] })
+const frame = ref<HTMLElement | null>(null)
+const h1 = ref<HTMLElement | null>(null)
+const leadEl = ref<HTMLElement | null>(null)
+useHeroMotion(() => (frame.value && h1.value && leadEl.value
+  ? { figs: [...frame.value.querySelectorAll<HTMLElement>('.hero-photo')], text: [h1.value, leadEl.value] }
+  : null))
 </script>
 
 <template>
   <section class="hero" aria-labelledby="hero-title">
-    <div class="hero-frame">
+    <div ref="frame" class="hero-frame">
       <div class="hero-photos">
-        <figure v-for="p in photos" :key="p.cls" class="hero-photo photo" :class="p.cls" :data-depth="p.depth">
+        <figure v-for="p in photos" :key="p.cls" class="hero-photo photo" :class="p.cls" :data-depth="p.depth" :data-mdepth="p.mdepth">
           <img :src="p.src" :alt="p.alt" :width="p.w" :height="p.h" />
         </figure>
       </div>
       <div class="hero-text">
-        <h1 id="hero-title" class="t-display">A home in Alanya, and someone to look after it</h1>
-        <div class="hero-lead title-lead">
+        <h1 id="hero-title" ref="h1" class="t-display t-hero"><span class="hl">A home in Alanya,</span> <span class="hl">and someone to</span> <span class="hl">look after it</span></h1>
+        <div ref="leadEl" class="hero-lead title-lead">
           <p class="t-body measure">{{ lead }}</p>
           <button class="btn btn--line btn--arrow t-button" type="button" data-enquire><span class="btn-t">Enquire<span class="btn-a" aria-hidden="true">→</span></span></button>
         </div>
@@ -35,6 +46,14 @@ const photos = [
     </div>
   </section>
 </template>
+
+<style>
+/* Avangu algolek enne JS-i (html.mo-intro head'i skriptist; MOTION.photo / MOTION.text väärtused). Eraldi globaalne plokk:
+   scoped :global(html.mo-intro) .x neelab järgneva osa ja reegel rakenduks kogu <html>-ile (scale muutis lehe paigutust). */
+html.mo-intro .hero .hero-photo { clip-path: inset(100% 0 0 0); }
+html.mo-intro .hero .hero-photo img { transform: scale(1.15); }
+html.mo-intro .hero .hero-text h1, html.mo-intro .hero .hero-lead { opacity: 0; translate: 0 10px; }   /* lint-ok: = MOTION.text.rise (JS-i algolek, sama väärtus) */
+</style>
 
 <style scoped>
 .hero { background: var(--surface); overflow: clip; }
@@ -67,15 +86,22 @@ figure { margin: 0; }
 /* lõik lõpeb hiljemalt veeru 8 lõpus (basseini foto vasakul) */
 .hero-lead p { max-width: min(var(--measure), calc(6 * var(--hero-step) - var(--gutter))); text-wrap: balance; }   /* read ühtlase pikkusega, viimane rida ei jää üksi */
 
-/* Telefon ja kitsas tahvel: fotoriba pealkirja kohal (ankur, magamistuba, elutuba) */
+/* Telefon ja kitsas tahvel (kasutaja Photoshopi kavand 2026-11-23): fotopaar ülal (villa | magamistuba), tekst,
+   fotopaar all (elutuba | ankur) — fotod raamivad teksti, alumine paar piilub esimese ekraani alt. Pealkiri kolmel
+   kindlal real, esimene rida täidab sisulaiuse (--t-hero). Ülemise paari kõrgus sõltub ka ekraani kõrgusest. */
 @media (max-width: 900px) {
-  .hero-frame { min-height: 100svh; grid-template-columns: minmax(0, 1fr); align-content: center; align-items: center; row-gap: var(--head-gap); padding-bottom: var(--frame-y); }
-  .hero-photos { position: relative; inset: auto; aspect-ratio: var(--r-landscape); margin-inline: calc(-1 * var(--pad-x-hero)); }
-  .hero-text { grid-column: 1 / -1; margin-bottom: 0; }
-  .hero-lead p { max-width: var(--measure); }
-  .pa { top: 0; left: auto; width: 38%; }
-  .pd { top: 8%; left: 30%; translate: none; width: 26%; }
-  .pl { bottom: 0; width: 34%; }
-  .pv, .pp { display: none; }
+  .hero-frame { min-height: 0; align-content: start; align-items: start; row-gap: 0; padding-bottom: var(--bar-gap); }
+  .hero-photos { display: contents; }
+  .hero-photo { position: static; translate: none; width: 100%; }
+  .pv { grid-area: 1 / 1 / 2 / 7; width: min(100%, calc(var(--hero-m-top) * 4 / 5)); }
+  .pd { grid-area: 1 / 7 / 2 / 13; align-self: center; }
+  .hero-text { grid-area: 2 / 1 / 3 / 13; margin-block: var(--head-gap) 0; }
+  /* Enquire → alumine paar väiksem vahe (kasutaja 2026-11-23) */
+  .pl { grid-area: 3 / 1 / 4 / 8; align-self: end; }
+  .pa { grid-area: 3 / 8 / 4 / 13; }
+  .pl, .pa { margin-top: var(--title-gap); }
+  .pp { display: none; }
+  .hero-lead p { max-width: var(--measure); text-wrap: pretty; }   /* telefonis täislaius (measure on laiem kui telefon), tahvlil lugemislaius (kasutaja 2026-11-23) */
+  .hl { display: block; }
 }
 </style>

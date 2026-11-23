@@ -20,4 +20,6 @@ a { color: inherit; text-decoration-color: currentColor; transition: color var(-
   margin-inline: var(--pad-x); padding-block: var(--gap); border-top: var(--hair) solid var(--rule);
   display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s-2) var(--gutter);
 }
+/* mobiilis read üksteise all keskel (kasutaja 2026-11-23) */
+@media (max-width: 700px) { .foot { flex-direction: column; align-items: center; text-align: center; } }
 </style>

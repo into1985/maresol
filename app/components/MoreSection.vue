@@ -5,15 +5,20 @@
    (kasutaja valik). Ground-toonis sektsioon: sec--flush-top (Homes annab --sec), Buying samuti sec--flush-top.
    Testvariandid (0, A, B, C) ja lüliti eemaldatud enne live'i (2026-11-23). */
 const url = 'https://maresol.eu/'
+
+/* Faas 5 (2026-11-23, muudetud samal päeval kasutaja loal): riba ja märk paigal — värvipind pole foto, maskiga avang
+   kuulub ainult fotodele. Liigub ainult sisu: loosung, nupp +0,2 s (sama tekstiavang kui mujal lehel). */
+const title = ref<HTMLElement>(), btn = ref<HTMLElement>()
+useReveal(() => [textUnit([title.value!, btn.value!])])
 </script>
 
 <template>
   <section id="more" class="mr sec sec--flush-top" aria-labelledby="more-title">
-    <div class="d">
+    <div class="d" data-dark>
       <svg class="d-mark" viewBox="0 0 382 222" aria-hidden="true" focusable="false"><use href="/assets/maresol-mark.svg#m" /></svg>
       <div class="d-text">
-        <h2 id="more-title" class="t-display">Where life finds its place.</h2>
-        <a class="btn btn--line btn--arrow t-button" :href="url" target="_blank" rel="noopener noreferrer"><span class="btn-t">See all homes on Maresol<span class="btn-a" aria-hidden="true">→</span></span></a>
+        <h2 ref="title" id="more-title" class="t-display">Where life finds its place.</h2>
+        <a ref="btn" class="btn btn--line btn--arrow t-button" :href="url" target="_blank" rel="noopener noreferrer"><span class="btn-t">See all homes on Maresol<span class="btn-a" aria-hidden="true">→</span></span></a>
       </div>
     </div>
   </section>

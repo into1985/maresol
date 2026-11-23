@@ -9,10 +9,25 @@ const kinds = [
   { key: 'view', lines: ['New homes', 'with a view'], text: 'New complexes on the slopes above Oba and the coast, looking out to the Taurus Mountains and the sea, from one-bedroom apartments to garden and penthouse duplexes, many with smart-home systems.', cta: 'View new homes', src: '/images/content/homes.webp', w: 1122, h: 1402, alt: 'Hermes Garden, a Memoshome residential project in Oba' },
   { key: 'villa', lines: ['Villas on', 'the hill'], text: 'Private houses above Alanya with their own pools, terraces and views across the coast. Room for family and guests, and enough privacy to feel far from the town below.', cta: 'View villas', src: '/images/content/villas.webp', w: 1024, h: 1536, alt: 'Prada Villas, hilltop villas with private infinity pools in Bektaş' },
 ]
+
+/* Faas 5 (MOTION.md, kasutaja 2026-11-23): pealkiri + lead · joon + hinnalause · kolm fotot rühmana (trigger = kõrgeim foto,
+   vasakult paremale .12 s) · kaartide tekstid rühmana (iga kaart tervikuna). ≤ 900 px kaardid üksteise all → iga foto ja tekst oma triggeril. */
+const root = ref<HTMLElement | null>(null)
+useReveal(() => {
+  const r = root.value!
+  const q = <T extends HTMLElement>(s: string) => r.querySelector<T>(s)!
+  const items = [...r.querySelectorAll<HTMLElement>('.a-item')]
+  const photos = items.map(i => photoUnit(i.querySelector<HTMLElement>('.a-photo')!))
+  const texts = items.map(i => textUnit([...i.querySelectorAll<HTMLElement>('.a-title, .title-text, .ex')], 0))
+  const intro = [textUnit([q('#homes-title'), q('.intro .t-lead')]), textUnit([q('.intro .rule'), q('.intro .is-soft')], 0)]
+  if (matchMedia('(max-width: 900px)').matches) return [...intro, ...items.flatMap((_, i) => [photos[i]!, texts[i]!])]
+  const tallest = items.map(i => i.querySelector<HTMLElement>('.a-photo')!).sort((x, y) => x.getBoundingClientRect().top - y.getBoundingClientRect().top)[0]
+  return [...intro, groupUnit(photos, MOTION.group, tallest), groupUnit(texts)]
+})
 </script>
 
 <template>
-  <section id="homes" class="ch sec sec--flush-top" aria-labelledby="homes-title">
+  <section id="homes" ref="root" class="ch sec sec--flush-top" aria-labelledby="homes-title">
     <div class="grid">
       <div class="intro">
         <h2 id="homes-title" class="t-h2">Choosing a home</h2>
@@ -74,10 +89,11 @@ ul { padding: 0; list-style: none; }
 @media (max-width: 900px) {
   .grid { grid-template-columns: minmax(0, 1fr); }
   .intro, .kinds { grid-column: 1; grid-row: auto; }
+  .intro > .t-lead { margin-top: var(--title-gap); }   /* pealkiri → lead: ühine mobiilivahe */
   .kinds { padding-left: 0; border-left: 0; margin-top: var(--head-gap); }
   .a { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; row-gap: var(--head-gap); }
   .a-item { display: block; grid-row: auto; }
   .a-title .ln { display: inline; }   /* telefonis tavaline murdumine */
-  .a-item .a-photo, .a-item:nth-child(n) .a-photo { aspect-ratio: var(--r-landscape); }
+  .a-item .a-photo, .a-item:nth-child(n) .a-photo { aspect-ratio: 1; }   /* mobiilis ruut (kasutaja 2026-11-23) */
 }
 </style>

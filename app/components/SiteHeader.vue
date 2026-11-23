@@ -50,12 +50,20 @@ const check = () => {
   let cur = ''
   for (const l of links) { const el = document.getElementById(l.id); if (el && el.getBoundingClientRect().top <= window.innerHeight * .4) cur = l.id }
   active.value = cur
+  /* „Menu" taustatundlik (kasutaja 2026-11-23): nupu keskpunkti all foto või tume pind ([data-dark]) → hele kiri */
+  const m = menuBtn.value?.getBoundingClientRect()
+  if (open.value || !m || !m.width) { onDark.value = false; return }
+  const under = document.elementsFromPoint(m.left + m.width / 2, m.top + m.height / 2).find(el => !el.closest('.site-nav'))
+  onDark.value = !!under?.closest('.photo, [data-dark]')
 }
+const menuBtn = ref<HTMLElement | null>(null)
+const onDark = ref(false)
 const onScroll = () => { if (!raf) raf = requestAnimationFrame(check) }
 const setOpen = (v: boolean) => {
   open.value = v
   if (v) setCard(false, false)
   document.documentElement.style.overflow = v ? 'hidden' : ''
+  if (!v) onScroll()   /* sulgemisel (ka menüühüppel) Menu värv uue tausta järgi */
   if (v) { const i = links.findIndex(l => l.id === active.value); preview.value = i < 0 ? 0 : i }
 }
 const onKey = (e: KeyboardEvent) => {
@@ -101,7 +109,7 @@ onBeforeUnmount(() => { window.removeEventListener('scroll', onScroll); window.r
         </div>
       </div>
       <p class="open-lang lang t-label"><a href="#" aria-current="true" @click.prevent><RollText text="EN" /></a> <span aria-hidden="true">/</span> <a href="#" @click.prevent><RollText text="NO" /></a></p>
-      <button class="menu t-button" type="button" :aria-expanded="open" aria-controls="menu-panel" :aria-label="open ? 'Close' : undefined" @click="setOpen(!open)">
+      <button ref="menuBtn" class="menu t-button" :class="{ 'on-dark': onDark && !open }" type="button" :aria-expanded="open" aria-controls="menu-panel" :aria-label="open ? 'Close' : undefined" @click="setOpen(!open)">
         <RollText v-if="!open" text="Menu" />
         <svg v-else class="x" viewBox="0 0 22 22" aria-hidden="true"><path d="M4 4 18 18M18 4 4 18" /></svg>
       </button>
@@ -179,6 +187,8 @@ a { color: inherit; }
 .send { margin-top: var(--head-gap); min-height: var(--hit); color: var(--ink); }   /* joon ja hover: base.css .u-link */
 @media (hover: hover) and (pointer: fine) { .send:hover { color: var(--accent); } }   /* scoped .send värv kirjutas .u-link:hover üle */
 .menu { grid-column: 3; justify-self: end; display: none; align-items: center; justify-content: center; min-height: var(--hit); min-width: var(--hit); padding-inline: var(--s-2); margin-right: calc(-1 * var(--s-2)); }
+/* fotol / aktsendiribal hele; hover jääb heledaks (aktsent kaoks fotole), tagasiside annab rull */
+.site-nav .menu.on-dark, .site-nav .menu.on-dark:hover { color: var(--on-accent); }
 .x { width: var(--icon); height: var(--icon); fill: none; stroke: currentColor; stroke-width: 1.5; }
 .links a[aria-current], .list a[aria-current] { color: var(--accent); }
 
@@ -197,9 +207,12 @@ a { color: inherit; }
   display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); column-gap: var(--gutter); align-items: center; align-content: center;
   padding: calc(var(--bar-top) + var(--bar-h) + var(--gap)) var(--pad-x);   /* sisu algab X-rea alt, mahub madalasse aknasse */
   overflow: auto;
-  opacity: 0; visibility: hidden; transition: opacity var(--dur-ui) var(--ease-ui), visibility 0s linear var(--dur-ui);
+  opacity: 0; visibility: hidden; transition: opacity var(--dur-out) var(--ease-ui), visibility 0s linear var(--dur-out);
 }
-.is-open .panel { opacity: 1; visibility: visible; transition: opacity var(--dur-ui) var(--ease-ui), visibility 0s linear; }
+.is-open .panel { opacity: 1; visibility: visible; transition: opacity var(--dur-in) var(--ease-ui), visibility 0s linear; }
+/* Faas 5: foto ja lingiplokk tõusevad koos (mitte link haaval); sulgemisel ainult tuhmumine, tõus nullitakse pärast seda */
+.panel-photo, .panel-body { translate: 0 var(--ov-rise); transition: translate 0s linear var(--dur-out); }
+.is-open .panel-photo, .is-open .panel-body { translate: none; transition: translate var(--dur-in) var(--ease-ui); }
 /* foto sama kõrge kui tekstiplokk: ülaserv = esimene link, alaserv = Enquire */
 .panel-photo { grid-column: 1 / 6; align-self: stretch; position: relative; }
 .panel-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity var(--dur-ui) var(--ease-ui); }
@@ -223,5 +236,6 @@ a { color: inherit; }
   .menu { display: inline-flex; }
   .panel { display: block; padding: var(--frame-y) var(--edge) var(--gap); }
   .panel-photo { display: none; }
+  .list a { padding-block: var(--menu-pad); }   /* lingid õhulisemad, suurem klikipind (kasutaja 2026-11-23) */
 }
 </style>

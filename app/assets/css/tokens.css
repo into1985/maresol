@@ -50,7 +50,11 @@
   --t-label: clamp(.625rem, .2vw + .5625rem, .75rem);
   --t-button: var(--t-label);                                  /* nupu silt = sildi suurus ja tähevahe (kasutaja 2026-11-20) */
   /* menüü: 5 linki + Enquire + kontakt; sõltub laiusest ja kõrgusest (navigatsioon-ja-cta.md). Kalibreeritakse menüü demos. */
-  --t-menu: clamp(1.75rem, min(4.4vw, (100svh - 2 * (var(--bar-top) + var(--bar-h)) - 13rem) / 8), 5rem);   /* 13rem = allkirjaplokk (nimi, kontaktid, Enquire) */
+  /* kõrgusepiir paneeli tegelikest osadest (kasutaja 2026-11-23: sülearvutis tekkis kerimisriba, vana valem 13rem / 8 alahindas):
+     paneeli padding üleval + all, lingid → allosa --head-gap, allosa = nimi (t-h3) + --title-lead + 2 kontaktirida (t-body) + --head-gap + nupp;
+     5 linki × --lh-h3 = 5,5 × suurus; --s-4 varu ümardamiseks */
+  --menu-foot: calc(var(--t-h3) * var(--lh-h3) + var(--title-lead) + 2 * var(--t-body) * var(--lh-body) + var(--head-gap) + var(--btn-h));
+  --t-menu: clamp(1.75rem, min(4.4vw, (100svh - 2 * (var(--bar-top) + var(--bar-h) + var(--gap)) - var(--head-gap) - var(--menu-foot) - var(--s-4)) / 5.5), 5rem);
 
   /* ---------- Tüpograafia: reavahed ja tähevahed ---------- */
   --lh-display: 1.02;
@@ -104,6 +108,9 @@
   --btn-px: clamp(3em, 4vw, 6.5em);
   --dur-ui: .3s;
   --ease-ui: cubic-bezier(.22, 1, .36, 1);
+  --dur-in: .4s;                                               /* overlay (menüü, päring) avamine (Faas 5, 2026-11-23) */
+  --dur-out: .2s;                                              /* overlay sulgemine: lühem, ainult tuhmub */
+  --ov-rise: 10px;                                             /* overlay sisu tõus avamisel = lehe teksti tõus (MOTION.text.rise) */
   --dur-line: .5s;                                             /* tekstilingi joone kadumine / naasmine */
   --roll-gap: .12em;                                           /* navbari rull: maski varu ja koopia kaugus */
   --roll-step: 18ms;                                           /* navbari rull: tähtede vaheline nihe */
@@ -136,4 +143,16 @@
   --z-header: 10;
   --z-overlay: 40;      /* menüü, päring */
   --z-close: 60;
+}
+
+/* Telefon / kitsas tahvel: menüülink laiusest (pikim „Local Partner" ≈ 5.4 em + varu → / 6.4) ja vabast kõrgusest
+   (12rem = Glenn + kontaktid + Enquire; 5 linki × (1.1 + 2 × --menu-pad) ≈ 6.7 em). Kasutaja 2026-11-23: lingid jäid 28 px peale. */
+@media (max-width: 900px) {
+  :root {
+    --t-hero: clamp(2.25rem, (100vw - 2 * var(--edge)) / 7.5, 4.5rem);   /* hero H1: „A home in Alanya," (7,27 em) täidab rea */
+    --hero-m-top: clamp(6rem, 100svh - 32rem, 25svh);       /* hero ülemise fotopaari kõrgus: tekst + Enquire esimesel ekraanil */
+    --title-gap: 1.5rem;                                    /* sektsiooni pealkiri → esimene sisu (lead või foto), kõikjal sama (kasutaja 2026-11-23) */
+    --menu-pad: .12em;                                       /* lingi püstvahe: õhk + klikipind */
+    --t-menu: clamp(1.75rem, min((100vw - 2 * var(--edge)) / 6.4, (100svh - var(--frame-y) - var(--gap) - var(--head-gap) - 12rem) / 6.7), 4rem);
+  }
 }

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Unit } from '~/composables/useMotion'
 /* Faas 2.6 „A complete ownership experience" (viimistletud 2026-11-22, demo /_demo/ownership-refine).
    Pealkiri, lead, read ja märkus vasakus veerus (1–7); foto paremal (8–13) algab pealkirja ülaservast,
    kõrgus ≤ 78 svh, kleepub ja kerib kaasa kogu vasaku veeru ulatuses (lõpus allkiri märkuse joonel).
@@ -7,7 +8,7 @@
 const items = [
   { key: 'arrive', name: 'Before you arrive', text: 'A transfer from the airport whatever time you land, the home cleaned and ready, and groceries in the fridge when you walk in.', src: '/images/content/arrive-home.webp', alt: 'A traveller with a suitcase walking to a car waiting with its door open at the airport' },
   { key: 'there', name: 'While you are there', text: 'Where the complex has the facilities, massage and hamam treatments can be arranged with staff who visit.', src: '/images/content/own-there.webp', alt: 'A therapist preparing a massage table on a terrace above the sea' },
-  { key: 'away', name: 'While you are away', text: "Regular inspections and upkeep, and Memoshome's own team for repairs, from plumbing and electrics to air conditioning and the garden.", src: '/images/content/own-away.webp', alt: 'A property manager checking her notes by the pool while a gardener tends the lawn' },
+  { key: 'away', name: 'While you are away', text: "Regular inspections and upkeep, and Memoshome’s own team for repairs, from plumbing and electrics to air conditioning and the garden.", src: '/images/content/own-away.webp', alt: 'A property manager checking her notes by the pool while a gardener tends the lawn' },
   { key: 'rent', name: 'If you rent it out', text: 'Help organising lettings, cleaning and changeovers between guests, and the practical side of hosting.', src: '/images/content/own-rent.webp', alt: 'A bright living room and dining table set for guests, with open doors to a terrace and the hills' },
   { key: 'year', name: 'All year', text: 'The owner app shows your bills, payments, property expenses and rental income in one place. You can order services through it, and reach the team around the clock if something urgent comes up.', src: '/images/content/owner-app.webp', alt: 'An owner checking bills and payments in the owner app on his phone, on a terrace above the bay' },
 ]
@@ -32,10 +33,44 @@ const pickByScroll = () => {
 const onScroll = () => { if (!raf) raf = requestAnimationFrame(pickByScroll) }
 onMounted(() => { window.addEventListener('scroll', onScroll, { passive: true }); pickByScroll() })
 onBeforeUnmount(() => { window.removeEventListener('scroll', onScroll); if (raf) cancelAnimationFrame(raf) })
+
+/* Faas 5 (2026-11-23): ainult esimene sisenemine, vahetus jääb. Foto K2 (raamis settib hetkel aktiivne foto), pealkiri +.4 s,
+   lead + allkiri +.2 s; read (h3, tekst +.2 s) ja märkus oma triggeril; peenjooned paigal. ≤ 900 px rea foto omaette K2. */
+const root = ref<HTMLElement>()
+/* Rea peenjoon(ed) avanevad koos rea tekstiga (kasutaja 2026-11-23: muidu oli enne sisu näha tühi joonte raam).
+   Peidus läbipaistvad, avangul tuhmuvad teksti kestuse ja kõveraga; aktiivse rea tume joon samuti alles siis. */
+const withLine = (row: HTMLElement, u: Unit): Unit => {
+  const T = MOTION.text
+  let t = 0
+  const clear = () => { clearTimeout(t); ['border-top-color', 'border-bottom-color', 'transition'].forEach(p => row.style.removeProperty(p)) }
+  return {
+    el: u.el,
+    hide() { u.hide(); row.style.borderTopColor = row.style.borderBottomColor = 'transparent' },
+    play(delay = 0) {
+      row.style.transition = `border-color ${T.dur}ms ${T.ease} ${delay}ms`
+      row.style.removeProperty('border-top-color'); row.style.removeProperty('border-bottom-color')
+      t = window.setTimeout(clear, delay + T.dur)
+      u.play(delay)
+    },
+    finish() { clear(); u.finish() },
+  }
+}
+useReveal(() => {
+  const r = root.value!
+  const q = <T extends HTMLElement>(s: string, el: HTMLElement = r) => el.querySelector<T>(s)!
+  const li = [...r.querySelectorAll<HTMLElement>('.row')]
+  const rowText = li.map(el => withLine(el, textUnit([q('h3', el), q('.row-text', el)])))
+  const note = textUnit([q('.note')])
+  if (matchMedia('(max-width: 900px)').matches)
+    return [textUnit([q('#own-title'), q('.text > .t-lead')]), ...li.flatMap((el, i) => [rowText[i]!, photoUnit(q('.inline', el))]), note]
+  const frame = q('.frame')
+  const head = groupUnit([textUnit([q('#own-title')]), textUnit([q('.text > .t-lead'), q('.cap')], 0)], 200)
+  return [groupUnit([photoUnit(frame, q('img.is-on', frame)), head], 400, frame), ...rowText, note]
+})
 </script>
 
 <template>
-  <section id="ownership" class="own sec sec--flush-top" aria-labelledby="own-title">
+  <section ref="root" id="ownership" class="own sec sec--flush-top" aria-labelledby="own-title">
     <div class="grid">
       <div class="text">
         <h2 id="own-title" class="t-h2">A complete ownership experience</h2>
@@ -92,7 +127,8 @@ ul { padding: 0; list-style: none; }
 @media (max-width: 900px) {
   .grid { grid-template-columns: minmax(0, 1fr); }
   .text { grid-column: 1; }
-  .row.is-active { border-top-color: var(--rule); }
+  .text > .t-lead { margin-top: var(--title-gap); }   /* pealkiri → lead: ühine mobiilivahe */
+  .row, .row:last-child { border-block: 0; }   /* virnas vaates peenjooni pole (kasutaja 2026-11-23) */
   .inline { display: block; min-height: 0; margin-top: var(--title-lead); }   /* block + min-height 0: 3 : 2 kärbe (cover), mitte püstfoto loomulik kõrgus */
   .stage-col { display: none; }
 }

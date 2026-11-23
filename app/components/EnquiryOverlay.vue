@@ -116,7 +116,7 @@ a { color: inherit; }
 /* ---------- tumendus kogu lehe peal (ka päisel) ---------- */
 .dim {
   position: fixed; inset: 0; z-index: var(--z-overlay);
-  opacity: 0; visibility: hidden; transition: opacity var(--dur-ui) var(--ease-ui), visibility 0s linear var(--dur-ui);
+  opacity: 0; visibility: hidden; transition: opacity var(--dur-out) var(--ease-ui), visibility 0s linear var(--dur-out);   /* sulgemine --dur-out, avamine nagu enne */
 }
 .dim { background: var(--dim); backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur)); }
 .is-open .dim { opacity: 1; visibility: visible; transition: opacity var(--dur-ui) var(--ease-ui), visibility 0s linear; }
@@ -128,10 +128,11 @@ a { color: inherit; }
   width: min(100% - 2 * var(--edge), var(--sheet-w)); max-height: calc(100svh - 2 * var(--gap));
   padding: var(--head-gap);
   background: var(--ground); color: var(--ink);
-  opacity: 0; visibility: hidden; transition: opacity var(--dur-ui) var(--ease-ui), visibility 0s linear var(--dur-ui);
+  opacity: 0; visibility: hidden; translate: 0 var(--ov-rise);
+  transition: opacity var(--dur-out) var(--ease-ui), visibility 0s linear var(--dur-out), translate 0s linear var(--dur-out);
 }
 .sheet:focus { outline: none; }
-.is-open .sheet { opacity: 1; visibility: visible; transition: opacity var(--dur-ui) var(--ease-ui), visibility 0s linear; }
+.is-open .sheet { opacity: 1; visibility: visible; translate: none; transition: opacity var(--dur-in) var(--ease-ui), visibility 0s linear, translate var(--dur-in) var(--ease-ui); }   /* Faas 5: kaart tõuseb, sulgemine ainult tuhmub */
 /* pealkiri ja X ühel real, X jääb paigale ka siis, kui sisu kerib */
 .top { display: flex; justify-content: space-between; align-items: center; gap: var(--gutter); }
 .close { display: inline-flex; align-items: center; justify-content: center; min-width: var(--hit); min-height: var(--hit); margin-right: calc(-1 * var(--s-3)); }
@@ -173,7 +174,7 @@ a { color: inherit; }
 }
 @media (max-width: 700px) {
   .sheet {
-    inset: 0; margin: 0; width: auto; height: auto; max-height: none;
+    inset: 0; margin: 0; width: auto; height: auto; max-height: none; translate: none;   /* täisekraan: tõus paljastaks alt lehte */
     padding: var(--bar-top) var(--edge) calc(var(--gap) + env(safe-area-inset-bottom));
   }
   .scroll { margin-top: var(--gap); }
