@@ -28,7 +28,7 @@ useDrift(() => (small.value && grid.value ? { el: small.value, anchor: grid.valu
     <div ref="grid" class="why-grid">
       <figure ref="big" class="why-photo photo">
         <span class="why-ratio r-tall" aria-hidden="true"></span>
-        <img src="/images/content/why-complex.webp" alt="A Memoshome villa in Alanya, with its pool and garden terrace" width="1122" height="1402" loading="lazy" decoding="async" />
+        <img src="/images/content/why-complex.webp" alt="A Memoshome residential complex in Alanya, with its pool and sun loungers" width="1122" height="1402" loading="lazy" decoding="async" />
       </figure>
       <div class="why-main">
         <h2 id="why-title" ref="title" class="t-h2">Why Memoshome</h2>
