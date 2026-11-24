@@ -14,22 +14,17 @@ export const MOTION = {
   text: { dur: 1600, rise: 10, step: 200, ease: 'cubic-bezier(.25,1,.5,1)' },
   drift: .1,
   group: 120,   /* rühma samm (Homes kaardid, kasutaja 2026-11-23) */
-  /* Hero avang (kinnitatud 2026-11-23: sügavuse järgi + kerimisnihe) */
-  intro: { step: 150, title: 400, cap: 2500 },
-  depth: { '1': .05, '2': .1, '3': .15 } as Record<string, number>,
+  intro: { title: 400, cap: 2500 },   /* hero avang: pealkiri +.4 s; valmisoleku lagi */
 }
 
 /* Hero vilkumise kaitse: head'i inline-skript enne CSS-i; 4 s varulahendus → data-mo-late = staatiline */
 export const INTRO_GUARD = "(function(){var h=document.documentElement;if(location.hash||matchMedia('(prefers-reduced-motion: reduce)').matches)return;h.classList.add('mo-intro');setTimeout(function(){if(h.classList.contains('mo-intro')){h.classList.remove('mo-intro');h.setAttribute('data-mo-late','')}},4000)})()"
 
-/* Hero: ajapõhine avang (fotod kaugemad enne, siis pealkiri ja lead) + kerimisnihe sügavuse järgi (transform; paigutus kasutab translate'i).
-   get() annab fotod (figure[data-depth]) ja tekstielemendid järjekorras. */
-export function useHeroMotion(get: () => { figs: HTMLElement[]; text: HTMLElement[] } | null) {
-  const nuxt = useNuxtApp() as unknown as { $lenis?: Ref<unknown> }
+/* Hero: ajapõhine avang laadimisel — foto (mask + suum), siis pealkiri ja lead. get() annab foto ja tekstielemendid järjekorras.
+   Kerimisnihet pole (kuni 2026-11-24 viis fotot sügavuse järgi; nüüd üks foto, millele ulatub pealkiri). */
+export function useHeroMotion(get: () => { fig: HTMLElement; text: HTMLElement[] } | null) {
   const P = MOTION.photo, T = MOTION.text, I = MOTION.intro
-  let parts: { figs: HTMLElement[]; text: HTMLElement[] } | null = null
-  let mq: MediaQueryList | null = null
-  let raf = 0
+  let parts: { fig: HTMLElement; text: HTMLElement[] } | null = null
   const root = () => document.documentElement
 
   const animate = (el: HTMLElement, kf: Keyframe[], o: KeyframeAnimationOptions, ...props: string[]) => {
@@ -39,50 +34,31 @@ export function useHeroMotion(get: () => { figs: HTMLElement[]; text: HTMLElemen
   }
   const play = () => {
     if (!parts) return
-    const { figs, text } = parts
-    const phone = matchMedia('(max-width: 900px)').matches
-    figs.filter(f => f.offsetParent).forEach(f => {
-      const d = (Number((phone && f.dataset.mdepth) || f.dataset.depth) - 1) * I.step   /* telefonis oma järjekord (data-mdepth) */
-      const img = f.querySelector('img') as HTMLImageElement
-      f.style.clipPath = 'inset(100% 0 0 0)'; img.style.transform = `scale(${P.from})`
-      animate(f, [{ clipPath: 'inset(100% 0 0 0)' }, { clipPath: 'inset(0% 0 0 0)' }], { duration: P.mask, delay: d, easing: P.ease }, 'clip-path')
-      animate(img, [{ transform: `scale(${P.from})` }, { transform: 'scale(1)' }], { duration: P.zoom, delay: d - P.lead, easing: P.ease }, 'transform')
-    })
+    const { fig, text } = parts
+    const img = fig.querySelector('img') as HTMLImageElement
+    fig.style.clipPath = 'inset(100% 0 0 0)'; img.style.transform = `scale(${P.from})`
+    animate(fig, [{ clipPath: 'inset(100% 0 0 0)' }, { clipPath: 'inset(0% 0 0 0)' }], { duration: P.mask, easing: P.ease }, 'clip-path')
+    animate(img, [{ transform: `scale(${P.from})` }, { transform: 'scale(1)' }], { duration: P.zoom, delay: -P.lead, easing: P.ease }, 'transform')
     text.forEach((e, i) => {
       e.style.opacity = '0'; e.style.translate = `0 ${T.rise}px`
       animate(e, [{ opacity: 0, translate: `0 ${T.rise}px` }, { opacity: 1, translate: '0 0' }], { duration: T.dur, delay: I.title + i * T.step, easing: T.ease }, 'opacity', 'translate')
     })
   }
 
-  const update = () => {
-    raf = 0
-    if (!parts) return
-    const on = mq?.matches && nuxt.$lenis?.value && scrollY > 0
-    for (const f of parts.figs) {
-      if (!on) { f.style.removeProperty('transform'); continue }
-      f.style.transform = `translate3d(0, ${(-scrollY * (MOTION.depth[f.dataset.depth!] ?? 0)).toFixed(2)}px, 0)`
-    }
-  }
-  const req = () => { if (!raf) raf = requestAnimationFrame(update) }
-
   onMounted(async () => {
     parts = get()
-    mq = matchMedia('(hover: hover) and (pointer: fine) and (min-width: 901px) and (prefers-reduced-motion: no-preference)')
-    addEventListener('scroll', req, { passive: true }); addEventListener('resize', req); mq.addEventListener('change', req)
-    req()
     if (!parts || !root().classList.contains('mo-intro')) return   /* ankur, reduced, hilinenud → staatiline */
-    const ready = Promise.all([document.fonts.ready, ...parts.figs.map(f => (f.querySelector('img') as HTMLImageElement).decode().catch(() => {}))])
+    const ready = Promise.all([document.fonts.ready, (parts.fig.querySelector('img') as HTMLImageElement).decode().catch(() => {})])
     await Promise.race([ready, new Promise(r => setTimeout(r, I.cap))])
     if (!root().classList.contains('mo-intro')) return
     /* inline-algolek enne klassi eemaldamist (vilkumata); taastatud kerimisasend hero all → avangut pole */
-    const past = parts.figs[0]!.closest('section')!.getBoundingClientRect().bottom <= 0
+    const past = parts.fig.closest('section')!.getBoundingClientRect().bottom <= 0
     if (!past) play()
     root().classList.remove('mo-intro')
   })
   onBeforeUnmount(() => {
-    removeEventListener('scroll', req); removeEventListener('resize', req); mq?.removeEventListener('change', req)
-    cancelAnimationFrame(raf)
-    parts?.figs.forEach(f => { stop(f); f.style.removeProperty('transform'); f.style.removeProperty('clip-path') })
+    if (parts) [parts.fig, ...parts.text, parts.fig.querySelector('img') as HTMLElement].forEach(stop)
+    parts?.fig.style.removeProperty('clip-path')
     root().classList.remove('mo-intro')
   })
 }

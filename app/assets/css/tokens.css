@@ -91,6 +91,7 @@
   --title-lead: clamp(1rem, 1.5vw, 1.5rem);                    /* pealkiri → oma lõik */
   --title-text: var(--s-3);                                    /* alapealkiri t-h3 → oma tekst (Ownership, Homes; kasutaja 2026-11-22) */
   --gutter: clamp(1rem, 3.34vw, 3rem);                         /* veergude vahe */
+  --nav-gap: min(var(--gutter), max(1rem, calc(11.4vw - 6rem)));   /* päise linkide vahe: ≥ 1200 px = --gutter, kitsamal väiksem, et logo ei kattuks (kasutaja 2026-11-24) */
   --gap: clamp(1rem, 2vw, 2rem);
   --s-0: .125rem;
   --s-1: .25rem;
@@ -125,13 +126,13 @@
   --r-wide: 16 / 9;
   --hero-max: 120rem;                                       /* hero kompositsiooni lagi 1920 px (kasutaja 2026-11-22) */
   --pad-x-hero: max(var(--edge), calc((min(100%, var(--hero-max)) - var(--content-max)) / 2));   /* padding-% = lõigu laiusest, mitte raami: arvuta raami laiusega */
-  --hero-h: min(100svh, calc(min(100vw, var(--hero-max)) / 1.6));   /* hero kõrgus ≤ laius / 1,6 */
-  /* Hero fotode veerujooned: joon(n) = --hero-px + (n − 1) × --hero-step. Raami laiusest (vw), sest % laheneks absoluutse foto juures valest kastist. */
+  --t-hero: clamp(2.75rem, 5.3vw, 6rem);                    /* hero H1 ulatub fotole (kasutaja 2026-11-24, demo A) */
+  /* Hero veerujooned: joon(n) = --hero-px + (n − 1) × --hero-step. Raami laiusest (vw), sest % laheneks absoluutse foto juures valest kastist. */
   --hero-px: max(var(--edge), calc((min(100vw, var(--hero-max)) - var(--content-max)) / 2));
   --hero-col: calc((min(100vw, var(--hero-max)) - 2 * var(--hero-px) - (var(--cols) - 1) * var(--gutter)) / var(--cols));
   --hero-step: calc(var(--hero-col) + var(--gutter));
-  --hero-small: calc(var(--hero-step) + var(--gutter));    /* hero väikesed püstfotod (villa, bassein) */
-  --hero-shift: calc(.6 * max(0px, calc((100vw - var(--hero-max)) / 2)));   /* > 1920 px: välimised hero fotod liiguvad 60 % külgruumist servade poole (kasutaja 2026-11-22, demo A „Hajutus"); ≤ 1920 = 0 */
+  --hero-photo-l: max(calc(3 * var(--hero-step)), calc(17rem + var(--gutter)));   /* foto algus raami sisust: 4. veerg, väikesel sülearvutil nii, et lõiguveerg ≥ 17rem */
+  --hero-photo-w: calc(min(100vw, var(--hero-max)) - 2 * var(--hero-px) - var(--hero-photo-l));
   --r-screen: 16 / 10;                                      /* Alanya foto (kasutaja 2026-11-22) */
   --r-portrait: 4 / 5;
   --r-tall: 3 / 4;
@@ -169,7 +170,6 @@
 @media (max-width: 900px) {
   :root {
     --t-hero: clamp(2.25rem, (100vw - 2 * var(--edge)) / 7.5, 4.5rem);   /* hero H1: „A home in Alanya," (7,27 em) täidab rea */
-    --hero-m-top: clamp(6rem, 100svh - 32rem, 25svh);       /* hero ülemise fotopaari kõrgus: tekst + Enquire esimesel ekraanil */
     --title-gap: 1.5rem;                                    /* sektsiooni pealkiri → esimene sisu (lead või foto), kõikjal sama (kasutaja 2026-11-23) */
     --menu-pad: .12em;                                       /* lingi püstvahe: õhk + klikipind */
     --map-t-main: var(--t-lead);                            /* kaart telefonis: kõik sildid üks samm väiksemad */

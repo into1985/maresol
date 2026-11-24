@@ -153,7 +153,7 @@ a { color: inherit; }
 }
 .is-open .site-header { z-index: var(--z-close); }
 .site-header > * { grid-row: 1; pointer-events: auto; transition: opacity var(--dur-ui) var(--ease-ui), visibility 0s linear; }
-.links { grid-column: 1; display: flex; gap: var(--gutter); }
+.links { grid-column: 1; display: flex; gap: var(--nav-gap); }
 .links a, .lang a { text-decoration: none; }
 .logo { grid-column: 2; display: block; height: var(--bar-h); }
 .logo img { height: 100%; width: auto; }
