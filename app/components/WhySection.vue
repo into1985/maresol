@@ -68,16 +68,16 @@ p { margin-block: 0; }
   .why-small { will-change: translate; }
 }
 
-/* Telefon ja kitsas tahvel: pealkiri, foto, tekst, väike foto üksteise all */
+/* Telefon ja kitsas tahvel: pealkiri, foto ja tekst üksteise all; dekoratiivne väike foto on peidus. */
 @media (max-width: 900px) {
   .why-grid { grid-template-columns: minmax(0, 1fr); }
   .why-photo { margin-top: var(--title-gap); }   /* pealkiri → foto: ühine mobiilivahe */
-  .why-text, .why-small { margin-top: var(--head-gap); }
-  .why-photo, .why-main, .why-small { grid-column: 1; grid-row: auto; }
+  .why-text { margin-top: var(--head-gap); }
+  .why-photo, .why-main { grid-column: 1; grid-row: auto; }
   .why-main { display: contents; }
   .why-main h2 { order: -1; }
   /* suur foto täislaiuses 4 : 3: hero jääb mobiili püstkaadriks, järgmine sektsioon on kompaktsem */
   .why-ratio { aspect-ratio: 4 / 3; }
-  .why-small { width: 40%; justify-self: start; will-change: auto; }   /* telefonis nihet pole → kihti pole vaja */   /* vasakul (kasutaja 2026-11-23) */
+  .why-small { display: none; }
 }
 </style>
