@@ -1,12 +1,16 @@
 <script setup lang="ts">
-/* 2. Why we chose Memoshome — uus paigutus kasutaja Photoshopi kavandi järgi (2026-11-22), asendas demo G „Pealkiri üle".
+/* 2. Why Memoshome (copy uuendatud 2026-11-24) —uus paigutus kasutaja Photoshopi kavandi järgi (2026-11-22), asendas demo G „Pealkiri üle".
    Suur püstfoto 3 : 4 veergudes 1–4; pealkiri + tekst veergudes 5–9 (vasak serv = Coasti / Homesi püstjoone
    järgne telg: 5. veerg + --gutter); väike ruutfoto 1 : 1 veergudes 11–12.
    Pealkiri + tekst üks plokk (vahe --head-gap), teksti ja väikese foto alaserv = suure foto alaserv. Kui tekst on
    fotost kõrgem, venib suur foto rea kõrguseni (vahekast + absoluutne img).
    Mõlemad fotod ajutised; kasutaja vahetab väikese foto teemaga sobiva vastu (nt ehitusplats). */
-const p1 = 'We wanted a partner in Turkey that would still be there after the sale. Memoshome buys the land, develops and builds the homes, sells them, and manages the complexes once the owners have moved in. Since 2000, the company has built 48 projects in and around Alanya.'
-const p2 = 'Maresol is run by Skippern Yachts, so our own background is in yachts, where a good boat comes with a management company behind it. A home abroad needs the same: people on the ground who know the building, because they built it.'
+const lead = 'Buying a home abroad is easier when the people who built it are still there after the sale.'
+const body = [
+  'Memoshome develops and builds its own projects, sells the homes and continues managing the complexes once owners move in. That means there is a local team on the ground who already knows the property, the building and how everything works.',
+  'Since 2000, Memoshome has completed 48 projects in and around Alanya, giving owners something especially valuable when buying abroad: continuity before, during and after the purchase.',
+  'Maresol brings this together for its clients, backed by Skippern Yachts and its experience with long-term ownership and management.'
+]
 
 /* Faas 5 (MOTION.md, kinnitatud demo B 2026-11-23): suur foto · pealkiri + tekst · väike foto oma triggeril;
    väike foto liigub kerimisel kiiremini (ankur = ruudustik, keskel nihe 0 → alaservad ühel joonel). */
@@ -27,10 +31,10 @@ useDrift(() => (small.value && grid.value ? { el: small.value, anchor: grid.valu
         <img src="/images/content/why-complex.webp" alt="A Memoshome villa in Alanya, with its pool and garden terrace" width="1122" height="1402" loading="lazy" decoding="async" />
       </figure>
       <div class="why-main">
-        <h2 id="why-title" ref="title" class="t-h2">Why we chose Memoshome</h2>
+        <h2 id="why-title" ref="title" class="t-h2">Why Memoshome</h2>
         <div ref="text" class="why-text">
-          <p class="t-lead">{{ p1 }}</p>
-          <p class="t-body title-lead">{{ p2 }}</p>
+          <p class="t-lead">{{ lead }}</p>
+          <p v-for="(para, i) in body" :key="i" class="t-body title-lead">{{ para }}</p>
         </div>
       </div>
       <figure ref="small" class="why-small photo">
@@ -50,8 +54,9 @@ p { margin-block: 0; }
 .why-ratio { display: block; }
 .why-photo img { position: absolute; inset: 0; }
 
-/* pealkiri + tekst üks plokk (vahe --head-gap), joondatud foto alaserva; vaba ruum jääb pealkirja kohale (kasutaja 2026-11-22) */
-.why-main { grid-column: 5 / 10; grid-row: 1; padding-left: var(--gutter); display: flex; flex-direction: column; justify-content: flex-end; gap: var(--head-gap); }
+/* pealkiri + tekst üks plokk, joondatud foto alaserva; vaba ruum jääb pealkirja kohale (kasutaja 2026-11-22).
+   Vahe pealkiri → oma lõik = --title-lead nagu Homes'is (kasutaja 2026-11-24; enne --head-gap) */
+.why-main { grid-column: 5 / 10; grid-row: 1; padding-left: var(--gutter); display: flex; flex-direction: column; justify-content: flex-end; gap: var(--title-lead); }
 
 .why-small { grid-column: 11 / 13; grid-row: 1; align-self: end; aspect-ratio: 1; }
 /* kerimisnihe (useDrift, 2D translate murdosa-pikslites): oma kiht, muidu joonistati foto igal kaadril ümber ja
