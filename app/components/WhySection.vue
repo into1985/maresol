@@ -28,7 +28,10 @@ useDrift(() => (small.value && grid.value ? { el: small.value, anchor: grid.valu
     <div ref="grid" class="why-grid">
       <figure ref="big" class="why-photo photo">
         <span class="why-ratio r-tall" aria-hidden="true"></span>
-        <img src="/images/content/why-complex.webp" alt="A Memoshome residential complex in Alanya, with its pool and sun loungers" width="1122" height="1402" loading="lazy" decoding="async" />
+        <picture>
+          <source media="(max-width: 900px)" srcset="/images/content/why-complex-landscape.webp" />
+          <img src="/images/content/why-complex.webp" alt="A Memoshome residential complex in Alanya, with its pool and sun loungers" width="1122" height="1402" loading="lazy" decoding="async" />
+        </picture>
       </figure>
       <div class="why-main">
         <h2 id="why-title" ref="title" class="t-h2">Why Memoshome</h2>
@@ -73,7 +76,8 @@ p { margin-block: 0; }
   .why-photo, .why-main, .why-small { grid-column: 1; grid-row: auto; }
   .why-main { display: contents; }
   .why-main h2 { order: -1; }
-  /* suur foto täislaiuses 3 : 4, sama mis Buying (kasutaja 2026-11-23; enne 78 %) */
+  /* suur foto täislaiuses 4 : 3: hero jääb mobiili püstkaadriks, järgmine sektsioon on kompaktsem */
+  .why-ratio { aspect-ratio: 4 / 3; }
   .why-small { width: 40%; justify-self: start; will-change: auto; }   /* telefonis nihet pole → kihti pole vaja */   /* vasakul (kasutaja 2026-11-23) */
 }
 </style>
