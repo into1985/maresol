@@ -7,9 +7,9 @@ const airports = [
   { name: 'Gazipaşa–Alanya Airport', time: 'About 30 to 45 minutes' },
   { name: 'Antalya Airport', time: 'About two hours' },
 ]
-const p1 = 'Oba is an established part of Alanya, a few kilometres east of the town centre, with the sea on one side and the Taurus foothills on the other. It is a place people live in, not only a holiday area: supermarkets, pharmacies, banks and bakeries sit alongside the cafés and restaurants, and there is a market every Monday.'
+const p1 = 'Just east of central Alanya, Oba is an established residential neighbourhood between the Mediterranean and the Taurus foothills. It is a place people live in, not only a holiday area: supermarkets, pharmacies, banks and bakeries sit alongside the cafés and restaurants, and there is a market every Monday.'
 const p2 = 'A promenade follows the beach for walking, running and cycling. Gyms, tennis and padel courts are close by, and the Alanyum shopping centre covers what the local shops do not. Depending on the home, much of this is within walking distance.'
-const note = 'Times by car vary with traffic and with where the home is. Transport from either airport can be arranged.'
+const note = 'Travel times vary with traffic and property location. Transport from either airport can be arranged.'
 
 /* Faas 5 (MOTION.md, kinnitatud sõnavara): foto K2 · pealkiri · lõigud (teine +.2 s) · lennujaamade plokk tervikuna, igaüks oma triggeril */
 const title = ref<HTMLElement | null>(null)
