@@ -79,7 +79,7 @@ useReveal(() => {
           <li v-for="(it, i) in items" :key="it.key" ref="rows" class="row" :class="{ 'is-active': active === i }" @pointermove="onMove(i, $event)">
             <h3 class="t-h3">{{ it.name }}</h3>
             <p class="t-body row-text">{{ it.text }}</p>
-            <figure class="inline photo r-landscape"><img :src="it.src" :alt="it.alt" width="1122" height="1402" loading="lazy" decoding="async" /></figure>
+            <figure class="inline photo r-landscape" :class="{ 'inline--away': it.key === 'away' }"><img :src="it.src" :alt="it.alt" width="1122" height="1402" loading="lazy" decoding="async" /></figure>
           </li>
         </ul>
         <p class="note t-note is-soft">Services vary from property to property and are confirmed for each home.</p>
@@ -130,6 +130,7 @@ ul { padding: 0; list-style: none; }
   .text > .t-lead { margin-top: var(--title-gap); }   /* pealkiri → lead: ühine mobiilivahe */
   .row, .row:last-child { border-block: 0; }   /* virnas vaates peenjooni pole (kasutaja 2026-11-23) */
   .inline { display: block; min-height: 0; margin-top: var(--title-lead); aspect-ratio: 4 / 3; }   /* 4 : 3 kärbe (cover), mitte püstfoto loomulik kõrgus */
+  .inline--away img { object-position: 50% 68%; }
   .stage-col { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
