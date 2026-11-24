@@ -10,7 +10,7 @@ const items = [
   { key: 'there', name: 'While you are there', text: 'Where the complex has the facilities, massage and hamam treatments can be arranged with staff who visit.', src: '/images/content/own-there.webp', alt: 'A therapist preparing a massage table on a terrace above the sea' },
   { key: 'away', name: 'While you are away', text: "Regular inspections and upkeep, and Memoshome’s own team for repairs, from plumbing and electrics to air conditioning and the garden.", src: '/images/content/own-away.webp', alt: 'A property manager checking her notes by the pool while a gardener tends the lawn' },
   { key: 'rent', name: 'If you rent it out', text: 'Help organising lettings, cleaning and changeovers between guests, and the practical side of hosting.', src: '/images/content/own-rent.webp', alt: 'A bright living room and dining table set for guests, with open doors to a terrace and the hills' },
-  { key: 'year', name: 'All year', text: 'The owner app shows your bills, payments, property expenses and rental income in one place. You can order services through it, and reach the team around the clock if something urgent comes up.', src: '/images/content/owner-app.webp', alt: 'An owner checking bills and payments in the owner app on his phone, on a terrace above the bay' },
+  { key: 'year', name: 'All year', text: 'The owner app shows your bills, payments, property expenses and rental income in one place. You can order services through it, and reach the team around the clock if something urgent comes up.', src: '/images/content/owner-app.webp', alt: 'A man viewing the Maresol website on his phone while sitting above the bay' },
 ]
 const active = ref(0)
 let last = { x: -1, y: -1 }
