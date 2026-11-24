@@ -171,6 +171,10 @@ figure { margin: 0; }
 
 .sr-only { position: absolute; width: var(--hair); height: var(--hair); overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
+@media (min-width: 901px) {
+  .lbl--sea { translate: -50% calc(-50% + max(3.25rem, var(--head-gap))); }
+}
+
 @media (max-width: 900px) {
   .where-title { margin-left: 0; }
 }
