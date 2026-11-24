@@ -31,7 +31,7 @@ useReveal(() => {
           <p class="t-body is-soft role">Real estate agent</p>
           <p class="reach title-lead">
             <a class="t-body u-link" href="tel:+4745818574"><span>+47 458 18 574</span></a>
-            <a class="t-body u-link" href="mailto:glenn@maresol.eu"><span>glenn@maresol.eu</span></a>
+            <a class="t-body u-link" href="mailto:contact@maresol.eu"><span>contact@maresol.eu</span></a>
           </p>
           <button class="btn btn--solid t-button" type="button" data-enquire>Enquire</button>
         </div>

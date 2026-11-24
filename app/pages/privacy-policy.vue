@@ -24,7 +24,7 @@ useSeoMeta({
         <h2 id="pp-who" class="t-h3">Who we are</h2>
         <div class="txt t-body">
           <p>Maresol is a brand operated by Skippern Yachts AS (company ID 932 726 874), Pastor Løkens vei 3, 1410 Kolbotn, Norway. Skippern Yachts AS is responsible for the personal data collected through this page.</p>
-          <p>Email: <a class="u-link" href="mailto:info@maresol.eu"><span>info@maresol.eu</span></a><br>Phone: <a class="u-link" href="tel:+4790081217"><span>+47 900 81 217</span></a></p>
+          <p>Email: <a class="u-link" href="mailto:contact@maresol.eu"><span>contact@maresol.eu</span></a><br>Phone: <a class="u-link" href="tel:+4790081217"><span>+47 900 81 217</span></a></p>
         </div>
       </section>
 
@@ -74,7 +74,7 @@ useSeoMeta({
       <section class="row grid" aria-labelledby="pp-rights">
         <h2 id="pp-rights" class="t-h3">Your rights</h2>
         <div class="txt t-body">
-          <p>You can ask to see the personal data we hold about you, have it corrected or deleted, restrict or object to how we use it, or receive a copy of it. Write to <a class="u-link" href="mailto:info@maresol.eu"><span>info@maresol.eu</span></a>.</p>
+          <p>You can ask to see the personal data we hold about you, have it corrected or deleted, restrict or object to how we use it, or receive a copy of it. Write to <a class="u-link" href="mailto:contact@maresol.eu"><span>contact@maresol.eu</span></a>.</p>
           <p>If you believe we handle your data wrongly, you can complain to the Norwegian Data Protection Authority, Datatilsynet (<a class="u-link" href="https://www.datatilsynet.no/" target="_blank" rel="noopener noreferrer"><span>datatilsynet.no</span></a>).</p>
         </div>
       </section>

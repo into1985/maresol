@@ -21,7 +21,7 @@ useReveal(() => [photoUnit(photo.value!), textUnit([title.value!]), textUnit([p1
 </script>
 
 <template>
-  <section id="alanya" class="cs sec sec--flush-top" aria-labelledby="coast-title">
+  <section id="oba" class="cs sec sec--flush-top" aria-labelledby="coast-title">
     <div class="grid">
       <div class="a-left">
         <h2 id="coast-title" ref="title" class="t-h2">Oba and the coast around it</h2>

@@ -60,6 +60,11 @@ button:focus, a:focus, [role="button"]:focus { outline: none; box-shadow: none; 
 .t-note    { font-family: var(--f-body);    font-weight: var(--w-regular);    font-size: var(--t-note);    line-height: var(--lh-note);    letter-spacing: var(--ls-0); }
 .t-label   { font-family: var(--f-label);   font-weight: var(--w-medium);     font-size: var(--t-label);   line-height: var(--lh-label);   letter-spacing: var(--ls-label); text-transform: uppercase; }
 .t-button  { font-family: var(--f-label);   font-weight: var(--w-medium);     font-size: var(--t-button);  line-height: var(--lh-one);     letter-spacing: var(--ls-label); text-transform: uppercase; }
+/* asukohakaardi sildid (Where is Alanya?) */
+.t-map-main  { font-family: var(--f-display); font-weight: var(--w-extralight); font-size: var(--map-t-main);  line-height: var(--lh-one); letter-spacing: var(--ls-display); }
+.t-map-place { font-family: var(--f-display); font-weight: var(--w-extralight); font-size: var(--map-t-place); line-height: var(--lh-one); letter-spacing: var(--ls-0); }
+.t-map-air   { font-family: var(--f-body);    font-weight: var(--w-regular);    font-size: var(--map-t-air);   line-height: var(--lh-note); letter-spacing: var(--ls-0); }
+.t-map-sea   { font-family: var(--f-display); font-weight: var(--w-extralight); font-size: var(--map-t-sea);   line-height: var(--lh-one); letter-spacing: var(--ls-label); }
 
 .is-soft { color: var(--soft); }
 .measure { max-width: var(--measure); }

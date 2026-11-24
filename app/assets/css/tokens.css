@@ -138,6 +138,25 @@
   --r-pano: 19 / 5;                                         /* madal merepanoraam (More, kasutaja kavand 2026-11-21) */
   --sticky-photo-w: calc(78svh * 4 / 5);                  /* kleepuva püstfoto (4 : 5) laius, kõrgus ≤ 78 svh (Ownership 2026-11-22) */
 
+  /* ---------- Asukohakaart „Where is Alanya?" (kasutaja 2026-11-24): värvid ja suurused olemasolevatest tokenitest ---------- */
+  --map-sea: var(--surface);
+  --map-sea-end: var(--ground);                                /* mere gradient sulandub alt lehe taustaga */
+  --map-land: var(--ground);
+  --map-coast: var(--ink);
+  --map-leader: var(--accent);                                 /* lennujaama juhtjoon (punktiir) */
+  --map-sea-label: color-mix(in srgb, var(--ink) 22%, var(--surface));   /* vesimärgina, mitte sildina */
+  --map-dot: .5rem;                                            /* linn */
+  --map-dot-main: .75rem;                                      /* Alanya */
+  --map-ring: .625rem;                                         /* lennujaam: õõnes rõngas */
+  --map-halo: .5rem;                                           /* Alanya ümbris */
+  --map-halo-color: color-mix(in srgb, var(--accent) 22%, transparent);
+  --map-knock: 3px;                                            /* rannajoone katkestus täpi ümber */
+  --map-t-main: var(--t-h3);                                   /* Alanya */
+  --map-t-place: var(--t-lead);                                /* Antalya, Oba, Gazipaşa */
+  --map-t-air: var(--t-note);                                  /* lennujaamad */
+  --map-t-sea: var(--t-h3);                                    /* Mediterranean Sea */
+  --map-dash: 3 4;                                             /* juhtjoone punktiir (SVG kasutaja-ühikutes) */
+
   /* ---------- Kihid ---------- */
   --z-content: 1;
   --z-header: 10;
@@ -153,6 +172,14 @@
     --hero-m-top: clamp(6rem, 100svh - 32rem, 25svh);       /* hero ülemise fotopaari kõrgus: tekst + Enquire esimesel ekraanil */
     --title-gap: 1.5rem;                                    /* sektsiooni pealkiri → esimene sisu (lead või foto), kõikjal sama (kasutaja 2026-11-23) */
     --menu-pad: .12em;                                       /* lingi püstvahe: õhk + klikipind */
+    --map-t-main: var(--t-lead);                            /* kaart telefonis: kõik sildid üks samm väiksemad */
+    --map-t-place: var(--t-body);
+    --map-t-sea: var(--t-body);
+    --map-dot: .375rem;
+    --map-dot-main: .5rem;
+    --map-ring: .5rem;
+    --map-halo: .3125rem;
+    --map-knock: 2px;
     --t-menu: clamp(1.75rem, min((100vw - 2 * var(--edge)) / 6.4, (100svh - var(--frame-y) - var(--gap) - var(--head-gap) - 12rem) / 6.7), 4rem);
   }
 }

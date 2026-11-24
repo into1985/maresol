@@ -35,6 +35,7 @@ useHead({
   <main>
     <HeroSection />
     <WhySection />
+    <WhereSection />
     <CoastSection />
     <HomesSection />
     <MoreSection />

@@ -101,7 +101,7 @@ onBeforeUnmount(() => { window.removeEventListener('scroll', onScroll); window.r
               <p class="t-body is-soft role">Real estate agent</p>
               <p class="reach title-lead">
                 <a class="t-body u-link" href="tel:+4745818574"><span>+47 458 18 574</span></a>
-                <a class="t-body u-link" href="mailto:glenn@maresol.eu"><span>glenn@maresol.eu</span></a>
+                <a class="t-body u-link" href="mailto:contact@maresol.eu"><span>contact@maresol.eu</span></a>
               </p>
               <button class="send t-button u-link" type="button" data-enquire @click="setCard(false, false)"><span>Send an enquiry</span></button>
             </div>
@@ -128,7 +128,7 @@ onBeforeUnmount(() => { window.removeEventListener('scroll', onScroll); window.r
             <p class="t-h3">Glenn Spydslaug</p>
             <p class="reach title-lead">
               <a class="t-body u-link" href="tel:+4745818574"><span>+47 458 18 574</span></a>
-              <a class="t-body u-link" href="mailto:glenn@maresol.eu"><span>glenn@maresol.eu</span></a>
+              <a class="t-body u-link" href="mailto:contact@maresol.eu"><span>contact@maresol.eu</span></a>
             </p>
           </div>
           <button class="btn btn--line btn--arrow t-button" type="button" data-enquire @click="setOpen(false)"><span class="btn-t">Enquire<span class="btn-a" aria-hidden="true">→</span></span></button>
