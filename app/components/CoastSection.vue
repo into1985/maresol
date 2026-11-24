@@ -62,6 +62,7 @@ figure { margin: 0; }
 @media (max-width: 900px) {
   .grid { grid-template-columns: minmax(0, 1fr); row-gap: 0; }
   .a-right { margin-top: var(--title-gap); }   /* pealkiri → foto: ühine mobiilivahe */
+  .a-photo { aspect-ratio: 4 / 3; }
   .a-info { margin-top: var(--head-gap); }
   .a-left, .a-right { grid-column: 1; }
   .a-right { padding-left: 0; border-left: 0; }

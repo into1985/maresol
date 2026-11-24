@@ -129,7 +129,7 @@ ul { padding: 0; list-style: none; }
   .text { grid-column: 1; }
   .text > .t-lead { margin-top: var(--title-gap); }   /* pealkiri → lead: ühine mobiilivahe */
   .row, .row:last-child { border-block: 0; }   /* virnas vaates peenjooni pole (kasutaja 2026-11-23) */
-  .inline { display: block; min-height: 0; margin-top: var(--title-lead); }   /* block + min-height 0: 3 : 2 kärbe (cover), mitte püstfoto loomulik kõrgus */
+  .inline { display: block; min-height: 0; margin-top: var(--title-lead); aspect-ratio: 4 / 3; }   /* 4 : 3 kärbe (cover), mitte püstfoto loomulik kõrgus */
   .stage-col { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
