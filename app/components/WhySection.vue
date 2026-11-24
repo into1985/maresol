@@ -41,7 +41,7 @@ useDrift(() => (small.value && grid.value ? { el: small.value, anchor: grid.valu
         </div>
       </div>
       <figure ref="small" class="why-small photo">
-        <img src="/images/content/developing.webp" alt="A Memoshome building site on the hillside in Alanya, with concrete pumps at work" width="1254" height="1254" loading="lazy" decoding="async" />
+        <img src="/images/content/compass.webp" alt="A monochrome compass rose" width="710" height="710" loading="lazy" decoding="async" />
       </figure>
     </div>
   </section>
