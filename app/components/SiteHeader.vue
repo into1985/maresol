@@ -43,16 +43,39 @@ const onDocClick = (e: MouseEvent) => {
 }
 
 let raf = 0
+/* Riba olek (kasutaja 2026-11-25). Desktop: ülaosas nähtav, alla kerides kaob (DOWN px, jääb Menu), üles kerides tuleb tagasi (UP px) oma taustaga.
+   Ankruhüpe ei ole üles kerimine: pärast linki jääb riba peidetuks. ≤ 900 px riba ei tule, kaasa liigub ainult ringiga Menu. */
+const UP = 70, DOWN = 12
+let lastY = 0, acc = 0, jump = 0
+const back = ref(false)
+const onHero = ref(false)
+const headEl = ref<HTMLElement | null>(null)
+const onJump = () => { jump = performance.now() + 400 }
+const near: Record<string, string> = { oba: 'alanya', more: 'homes', visit: '', contact: '' }   /* oma lingita sektsioonid */
 const check = () => {
   raf = 0
-  scrolled.value = window.scrollY > 80
+  const y = Math.max(0, window.scrollY), dy = y - lastY
+  lastY = y
+  /* riba kõrgus ja hero toon taustas sõltuvad ainult kerimisest (nagu sticky): üleminek hero päriseks ribaks ilma hüppeta */
+  const heroB = Math.max(0, document.querySelector('.hero')?.getBoundingClientRect().bottom ?? 0)
+  headEl.value?.style.setProperty('--y', `${y}px`)
+  headEl.value?.style.setProperty('--hero-b', `${heroB}px`)
+  if (y <= 2) { scrolled.value = false; back.value = false; acc = 0 }
+  else if (y <= 80) { if (scrolled.value) back.value = window.innerWidth > 900; scrolled.value = false; acc = 0 }
+  else if (window.innerWidth <= 900 || performance.now() < jump) { scrolled.value = true; back.value = false; acc = 0 }
+  else if (!open.value && dy) {
+    acc = Math.sign(dy) === Math.sign(acc) ? acc + dy : dy
+    if (acc <= -UP) { scrolled.value = false; back.value = true }
+    else if (acc >= DOWN || !back.value) { scrolled.value = true; back.value = false }
+  }
   if (scrolled.value) setCard(false, false)
   let cur = ''
-  for (const l of links) { const el = document.getElementById(l.id); if (el && el.getBoundingClientRect().top <= window.innerHeight * .4) cur = l.id }
+  for (const e of document.querySelectorAll<HTMLElement>('main section[id]')) if (e.getBoundingClientRect().top <= window.innerHeight * .4) cur = near[e.id] ?? e.id
   active.value = cur
   /* „Menu" taustatundlik (kasutaja 2026-11-23): nupu keskpunkti all foto või tume pind ([data-dark]) → hele kiri */
   const m = menuBtn.value?.getBoundingClientRect()
   if (open.value || !m || !m.width) { onDark.value = false; return }
+  onHero.value = heroB > m.top + m.height / 2
   const under = document.elementsFromPoint(m.left + m.width / 2, m.top + m.height / 2).find(el => !el.closest('.site-nav'))
   onDark.value = !!under?.closest('.photo, [data-dark]')
 }
@@ -78,16 +101,16 @@ const hover = (i: number, e: PointerEvent) => {
   last = { x: e.clientX, y: e.clientY }
   preview.value = i
 }
-const go = () => setOpen(false)
-onMounted(() => { window.addEventListener('scroll', onScroll, { passive: true }); window.addEventListener('keydown', onKey); document.addEventListener('click', onDocClick); check() })
-onBeforeUnmount(() => { window.removeEventListener('scroll', onScroll); window.removeEventListener('keydown', onKey); document.removeEventListener('click', onDocClick); document.documentElement.style.overflow = ''; if (raf) cancelAnimationFrame(raf) })
+const go = () => { onJump(); setOpen(false) }
+onMounted(() => { window.addEventListener('scroll', onScroll, { passive: true }); window.addEventListener('keydown', onKey); document.addEventListener('click', onDocClick); window.addEventListener('hashchange', onJump); lastY = window.scrollY; scrolled.value = lastY > 80; check() })
+onBeforeUnmount(() => { window.removeEventListener('scroll', onScroll); window.removeEventListener('keydown', onKey); document.removeEventListener('click', onDocClick); window.removeEventListener('hashchange', onJump); document.documentElement.style.overflow = ''; if (raf) cancelAnimationFrame(raf) })
 </script>
 
 <template>
-  <div class="site-nav" :class="{ 'is-open': open, 'is-scrolled': scrolled }">
-    <header class="site-header">
+  <div class="site-nav" :class="{ 'is-open': open, 'is-scrolled': scrolled, 'is-back': back, 'is-hero': onHero }">
+    <header ref="headEl" class="site-header">
       <nav class="links" aria-label="Sections">
-        <a v-for="l in links" :key="l.id" class="t-label" :href="hrefOf(l.id)" :aria-current="active === l.id ? 'true' : undefined"><RollText :text="l.label" /></a>
+        <a v-for="l in links" :key="l.id" class="t-label" :href="hrefOf(l.id)" @click="onJump" :aria-current="active === l.id ? 'true' : undefined"><RollText :text="l.label" /></a>
       </nav>
       <NuxtLink class="logo" to="/" @click="toTop"><img src="/assets/maresol-logo-header.webp" alt="Maresol" width="213" height="176" /></NuxtLink>
       <div class="actions">
@@ -147,10 +170,19 @@ a { color: inherit; }
 .site-header {
   position: fixed; inset-inline: 0; top: 0; z-index: var(--z-header);
   max-width: var(--hero-max); margin-inline: auto;
-  padding: var(--bar-top) var(--edge);
+  /* kerides kitsam: viimased pikslid lehe alguses liiguvad koos lehega */
+  padding: calc(var(--bar-tight) + clamp(0px, var(--bar-top) - var(--bar-tight) - var(--y, 0px), var(--bar-top) - var(--bar-tight))) var(--edge);
   display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; column-gap: var(--gutter);
   pointer-events: none;   /* riba tühi ala ei blokeeri lehte; elemendid ise klikitavad */
 }
+/* üles kerides tagasi tulnud riba taust: lehe toon täislaiuses, hero all hero toon täpselt hero alaservani.
+   Üks kiht: kahe kihi korraga tuhmudes kumas heledam lehe toon hero kohal läbi */
+.site-header::before {
+  content: ''; position: absolute; z-index: -1; top: 0; left: 50%; width: 100vw; height: 100%; translate: -50% 0;
+  background: linear-gradient(var(--surface) var(--hero-b, 0px), var(--ground) var(--hero-b, 0px));
+  opacity: 0; transition: opacity var(--dur-ui) var(--ease-ui); pointer-events: none;
+}
+.is-back:not(.is-open) .site-header::before { opacity: 1; }
 .is-open .site-header { z-index: var(--z-close); }
 .site-header > * { grid-row: 1; pointer-events: auto; transition: opacity var(--dur-ui) var(--ease-ui), visibility 0s linear; }
 .links { grid-column: 1; display: flex; gap: var(--nav-gap); }
@@ -186,15 +218,16 @@ a { color: inherit; }
 /* päring tekstitegevusena: hero Enquire jääb ainus kastiga nupp */
 .send { margin-top: var(--head-gap); min-height: var(--hit); color: var(--ink); }   /* joon ja hover: base.css .u-link */
 @media (hover: hover) and (pointer: fine) { .send:hover { color: var(--accent); } }   /* scoped .send värv kirjutas .u-link:hover üle */
-.menu { grid-column: 3; justify-self: end; display: none; align-items: center; justify-content: center; min-height: var(--hit); min-width: var(--hit); padding-inline: var(--s-2); margin-right: calc(-1 * var(--s-2)); }
+.menu { grid-column: 3; justify-self: end; display: inline-flex; opacity: 0; visibility: hidden; align-items: center; justify-content: center; min-height: var(--hit); min-width: var(--hit); padding-inline: var(--s-2); margin-right: calc(-1 * var(--s-2)); }
 /* fotol / aktsendiribal hele; hover jääb heledaks (aktsent kaoks fotole), tagasiside annab rull */
 .site-nav .menu.on-dark, .site-nav .menu.on-dark:hover { color: var(--on-accent); }
 .x { width: var(--icon); height: var(--icon); fill: none; stroke: currentColor; stroke-width: 1.5; }
 .links a[aria-current], .list a[aria-current] { color: var(--accent); }
 
-/* kerides: riba kaob, jääb ainult Menu */
+/* kerides: riba kaob, jääb ainult Menu; Menu ja Contact vahetuvad järjest (tulija --dur-swap hiljem) */
 .is-scrolled .links, .is-scrolled .logo, .is-scrolled .actions { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity var(--dur-ui) var(--ease-ui), visibility 0s linear var(--dur-ui); }
-.is-scrolled .menu, .is-open .menu { display: inline-flex; }
+.is-scrolled .menu, .is-open .menu { opacity: 1; visibility: visible; transition: opacity var(--dur-ui) var(--ease-ui) var(--dur-swap), color var(--dur-line) var(--ease-ui), visibility 0s linear var(--dur-swap); }
+.is-back .links, .is-back .logo, .is-back .actions { transition: opacity var(--dur-ui) var(--ease-ui) var(--dur-swap), visibility 0s linear var(--dur-swap); }
 /* avatud menüüs logo peidus, ainult X; EN / NO X-iga samal real vasakul */
 .is-open .logo { opacity: 0; visibility: hidden; pointer-events: none; }
 .open-lang { grid-column: 1; justify-self: start; min-height: var(--hit); align-items: center; display: none; }
@@ -230,10 +263,18 @@ a { color: inherit; }
 /* joon ja hover: base.css .u-link */
 
 @media (max-width: 900px) {
-  .site-header { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .site-header { grid-template-columns: auto minmax(0, 1fr) auto; padding-block: calc(var(--bar-top) + var(--bar-ring)) var(--bar-top); }   /* ringi ülemine vahe = parem vahe */
   .links, .actions { display: none; }
   .logo { grid-column: 1; }
-  .menu { display: inline-flex; }
+  .menu, .is-scrolled .menu, .is-open .menu { position: relative; isolation: isolate; opacity: 1; visibility: visible; transition: color var(--dur-line) var(--ease-ui); }
+  /* kaasa liikuva Menu ring (kasutaja 2026-11-25): kiri püsib paigal, ring ilmub selle ümber; hero pinnal (--surface) lehe toonis, et eristuks */
+  .menu::before {
+    content: ''; position: absolute; z-index: -1; left: 50%; top: 50%; width: var(--menu-ring); height: var(--menu-ring); translate: -50% -50%;
+    border-radius: 50%; background: var(--surface); opacity: 0; transition: opacity var(--dur-ui) var(--ease-ui), background-color var(--dur-ui) var(--ease-ui);
+  }
+  .is-hero .menu::before { background: var(--ground); }
+  .is-scrolled:not(.is-open) .menu::before { opacity: 1; }
+  .site-nav .menu.on-dark, .site-nav .menu.on-dark:hover { color: var(--ink); }   /* kirja taust on ring */
   .panel { display: block; padding: var(--frame-y) var(--edge) var(--gap); }
   .panel-photo { display: none; }
   .list a { padding-block: var(--menu-pad); }   /* lingid õhulisemad, suurem klikipind (kasutaja 2026-11-23) */

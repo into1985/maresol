@@ -84,6 +84,9 @@
   /* ---------- Vahed ---------- */
   --bar-top: clamp(1rem, 2vw, 1.8rem);                         /* päis ülaservast */
   --bar-h: clamp(28px, 2.4vw, 44px);                           /* logo kõrgus (lagi 38 → 44, kasutaja 2026-11-22) */
+  --bar-tight: calc(var(--bar-top) * .6);                      /* kerides kaasa tulev päis on kitsam */
+  --bar-ring: .375rem;                                         /* mobiil: päise rida allapoole, Menu ringi ülemine vahe = parem vahe */
+  --menu-ring: 3.5rem;                                         /* mobiili Menu ring */
   --bar-gap: clamp(2.5rem, 7vh, 9rem);
   --frame-y: calc(var(--bar-top) + var(--bar-h) + var(--bar-gap));   /* täisekraani ploki ülemine = alumine vahe */
   --sec: clamp(4.5rem, 6vw + 7vh, 11rem);                      /* sektsiooni ülemine ja alumine vahe */
@@ -108,6 +111,7 @@
   --btn-h: clamp(3.25rem, 3.6vw, 4.125rem);
   --btn-px: clamp(3em, 4vw, 6.5em);
   --dur-ui: .3s;
+  --dur-swap: .12s;                                            /* päis: Menu ↔ Contact vahetus järjest */
   --ease-ui: cubic-bezier(.22, 1, .36, 1);
   --dur-in: .4s;                                               /* overlay (menüü, päring) avamine (Faas 5, 2026-11-23) */
   --dur-out: .2s;                                              /* overlay sulgemine: lühem, ainult tuhmub */
