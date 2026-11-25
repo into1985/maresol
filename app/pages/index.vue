@@ -35,7 +35,7 @@ useHead({
   <main>
     <HeroSection />
     <WhySection />
-    <WhereSection />
+    <WhereMapSection />   <!-- vana kaart tagavaraks: WhereSection -->
     <CoastSection />
     <HomesSection />
     <MoreSection />

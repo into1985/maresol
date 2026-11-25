@@ -158,11 +158,32 @@
   --map-t-sea: var(--t-h3);                                    /* Mediterranean Sea */
   --map-dash: 3 4;                                             /* juhtjoone punktiir (SVG kasutaja-ühikutes) */
 
+  /* ---------- Asukohakaart v2 (WhereMapSection, kasutaja 2026-11-25). Vana kaart (WhereSection) kasutab --map-* ülal ---------- */
+  --map2-dot: .75rem;                                          /* linn: täpp + ümbris */
+  --map2-halo: .5rem;
+  --map2-dot-main: 1.5rem;                                     /* Alanya: täpp 2 ×, hele äär lehe toonis, suur ümbris */
+  --map2-halo-main: 2rem;
+  --map2-rim: .3125rem;
+  --map2-r: calc(var(--map2-dot) / 2 + var(--map2-halo));
+  --map2-r-main: calc(var(--map2-dot-main) / 2 + var(--map2-halo-main));
+  --map2-sea-drop: max(3.25rem, var(--head-gap));              /* „Mediterranean Sea" lahe keskelt allapoole */
+  --map2-oba-up: clamp(0px, (1100px - 100vw) * .05, 10px);     /* Oba nimi kitsamal kaardil kõrgemal: ruum Gazipaşa lennujaama sildile */
+  --map2-dash: 4 4;                                            /* teekonna punktiir */
+  --lh-map: 1.35;                                              /* kaherealine lennujaama silt */
+
   /* ---------- Kihid ---------- */
   --z-content: 1;
   --z-header: 10;
   --z-overlay: 40;      /* menüü, päring */
   --z-close: 60;
+}
+
+/* Asukohakaart v2 kitsal */
+@media (max-width: 900px) {
+  :root { --map2-dot: .5rem; --map2-halo: .3125rem; --map2-dot-main: 1rem; --map2-halo-main: 1.25rem; --map2-rim: .25rem; --map2-sea-drop: 0px; }
+}
+@media (max-width: 700px) {
+  :root { --map2-sea-drop: 10vw; --map2-oba-up: 0px; }         /* telefonis merenimi ülaosa siltidest eemal, lennujaamu pole */
 }
 
 /* Telefon / kitsas tahvel: menüülink laiusest (pikim „Local Partner" ≈ 5.4 em + varu → / 6.4) ja vabast kõrgusest

@@ -64,6 +64,8 @@ button:focus, a:focus, [role="button"]:focus { outline: none; box-shadow: none; 
 .t-map-main  { font-family: var(--f-display); font-weight: var(--w-extralight); font-size: var(--map-t-main);  line-height: var(--lh-one); letter-spacing: var(--ls-display); }
 .t-map-place { font-family: var(--f-display); font-weight: var(--w-extralight); font-size: var(--map-t-place); line-height: var(--lh-one); letter-spacing: var(--ls-0); }
 .t-map-air   { font-family: var(--f-body);    font-weight: var(--w-regular);    font-size: var(--map-t-air);   line-height: var(--lh-note); letter-spacing: var(--ls-0); }
+.t-map-air--lines { line-height: var(--lh-map); }   /* kaherealine lennujaama nimi (kaart v2) */
+.t-map-time  { font-family: var(--f-display); font-weight: var(--w-extralight); font-size: var(--map-t-air);   line-height: var(--lh-one); letter-spacing: var(--ls-0); }   /* sõiduaeg teekonna joonel (kaart v2) */
 .t-map-sea   { font-family: var(--f-display); font-weight: var(--w-extralight); font-size: var(--map-t-sea);   line-height: var(--lh-one); letter-spacing: var(--ls-label); }
 
 .is-soft { color: var(--soft); }
