@@ -7,7 +7,7 @@ const intro = 'Through Maresol you can choose from new homes Memoshome is still 
 const kinds = [
   { key: 'sea', lines: ['Apartments by', 'the sea'], text: 'Furnished apartments a short walk from the beach, in complexes with pools and a hamam. Easy to use for a few weeks at a time and, where allowed, to rent out while you are away.', cta: 'View apartments', src: '/images/content/apartments.webp', w: 1254, h: 1254, alt: 'Renda Park, a completed Memoshome residential complex in Oba' },
   { key: 'view', lines: ['New homes', 'with a view'], text: 'New complexes on the slopes above Oba and the coast, looking out to the Taurus Mountains and the sea, from one-bedroom apartments to garden and penthouse duplexes, many with smart-home systems.', cta: 'View new homes', src: '/images/content/homes.webp', w: 1122, h: 1402, alt: 'Hermes Garden, a Memoshome residential project in Oba' },
-  { key: 'villa', lines: ['Villas on', 'the hill'], text: 'Private houses above Alanya with their own pools, terraces and views across the coast. Room for family and guests, and enough privacy to feel far from the town below.', cta: 'View villas', src: '/images/content/villas.webp', w: 1024, h: 1536, alt: 'Prada Villas, hilltop villas with private infinity pools in Bektaş' },
+  { key: 'villa', lines: ['Villas on', 'the hill'], text: 'Private houses above Alanya with their own pools, terraces and views across the coast. Room for family and guests, and enough privacy to feel far from the town below.', cta: 'View villas', src: '/images/content/villas.webp', w: 971, h: 1619, alt: 'Modern villa with a garden and private pool beside a wooded hillside' },
 ]
 
 /* Faas 5 (MOTION.md, kasutaja 2026-11-23): pealkiri + lead · joon + hinnalause · kolm fotot rühmana (trigger = kõrgeim foto,
