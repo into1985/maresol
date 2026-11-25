@@ -77,7 +77,7 @@ function measure() {
 const ROUTE = { gap: 18, tip: 4, head: 8, half: 3.2, text: 10 }
 type Pt = { x: number, y: number }
 const ROUTES = [{ k: 'AYT', time: '~ 2 h' }, { k: 'GZP', time: '30–45 min' }]
-type Route = { lines: string[], heads: string[], text: Pt }
+type Route = { lines: string[], heads: string[], text: Pt, full: string }
 const routes = ref<Record<string, Route>>({})
 function drawRoute() {
   const el = fig.value; if (!el) return
@@ -93,10 +93,11 @@ function drawRoute() {
   const g0 = { x: A.l + A.w + ROUTE.gap * .7, y: mid(A).y }, g3 = { x: mid(gzp).x, y: gzp.t - ROUTE.tip }, gx = g3.x - g0.x, gy = g3.y - g0.y
   routes.value = {
     AYT: curve([a0, { x: a0.x + ad * .32, y: a0.y - ad * .1 }, { x: a0.x + ad * .72, y: a0.y - ad * .04 }, a3], rect('[data-time="AYT"]')),
-    GZP: curve([g0, { x: g0.x + gx * .55, y: g0.y - gy * .05 }, { x: g0.x + gx * .94, y: g0.y + gy * .45 }, g3], rect('[data-time="GZP"]')),
+    GZP: curve([g0, { x: g0.x + gx * .55, y: g0.y - gy * .05 }, { x: g0.x + gx * .94, y: g0.y + gy * .45 }, g3], rect('[data-time="GZP"]'), true),
   }
 }
-function curve(P: Pt[], tx: { w: number, h: number }): Route {
+/* back: joonistub lõpust alguse poole (maski tee tagurpidi; negatiivset dashoffset'i vanem Safari ei toeta) */
+function curve(P: Pt[], tx: { w: number, h: number }, back = false): Route {
   const at = (t: number): Pt => { const u = 1 - t, f = (k: 'x' | 'y') => u * u * u * P[0]![k] + 3 * u * u * t * P[1]![k] + 3 * u * t * t * P[2]![k] + t * t * t * P[3]![k]; return { x: f('x'), y: f('y') } }
   const N = 240, pts = Array.from({ length: N + 1 }, (_, i) => at(i / N))
   const len = [0]; for (let i = 1; i <= N; i++) len[i] = len[i - 1]! + dist(pts[i]!, pts[i - 1]!)
@@ -110,8 +111,8 @@ function curve(P: Pt[], tx: { w: number, h: number }): Route {
     const n = dist(tip, from), ux = (tip.x - from.x) / n, uy = (tip.y - from.y) / n, B = { x: tip.x - ux * ROUTE.head, y: tip.y - uy * ROUTE.head }, C = { x: tip.x - ux * ROUTE.head * .72, y: tip.y - uy * ROUTE.head * .72 }
     return [tip, { x: B.x - uy * ROUTE.half, y: B.y + ux * ROUTE.half }, C, { x: B.x + uy * ROUTE.half, y: B.y - ux * ROUTE.half }].map(p => `${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(' ')
   }
-  const back = (i: number) => pts[i]!
-  return { lines: [d(left.reverse()), d(right)], heads: [head(P[0]!, back(len.findIndex(v => v >= ROUTE.head))), head(P[3]!, back(len.findIndex(v => v >= L - ROUTE.head)))], text: mid }
+  const full = d(back ? [...pts].reverse() : pts)
+  return { lines: [d(left.reverse()), d(right)], heads: [head(P[0]!, pts[len.findIndex(v => v >= ROUTE.head)]!), head(P[3]!, pts[len.findIndex(v => v >= L - ROUTE.head)]!)], text: mid, full }
 }
 /* Vesi (kasutaja 2026-11-25): gradiendi asemel horisontaalsed heledad jooned, tihedamad ranniku ääres ja kaovad merele.
    Canvas, sest joonevahe ja -paksus on px-des igal kaardi laiusel ning läbipaistvus muutub piki joont.
@@ -196,23 +197,30 @@ onBeforeUnmount(() => { ro?.disconnect(); io?.disconnect(); cancelAnimationFrame
    nimi tuhmub ja tõuseb; lennujaamad samamoodi.
    Tõus on transform, sest siltide asend on translate'is. */
 const title = ref<HTMLElement | null>(null)
-type Part = { els: Element[], delay: number, kind: 'fade' | 'rise' }
+/* Teekondade joonistumine (kasutaja kinnitas 2026-11-25, MOTION.md): punktiir avaneb maski tagant lennujaamast Alanya poole; algusnool kohe, sõiduaeg joone keskel, lõpunool joone lõpus */
+const DRAW = { AYT: { dur: 1600, delay: 0 }, GZP: { dur: 1000, delay: 800 }, head: 400, time: .4, tip: .75, ease: 'cubic-bezier(.45,0,.35,1)' }
+const drawing = ref(false)
+type Part = { els: Element[], delay: number, kind: 'fade' | 'rise' | 'line', dur?: number }
 function mapUnit(el: HTMLElement, at: number, parts: Part[]): Unit {
   const T = MOTION.text
-  const all = parts.flatMap(p => p.els.map(e => ({ e: e as HTMLElement | SVGElement, delay: p.delay, kind: p.kind })))
+  const all = parts.flatMap(p => p.els.map(e => ({ e: e as HTMLElement | SVGElement, delay: p.delay, kind: p.kind, dur: p.dur })))
   let anims: Animation[] = []
   const finish = () => {
     anims.forEach(a => a.cancel()); anims = []
-    all.forEach(({ e }) => e.style.removeProperty('opacity'))
+    all.forEach(({ e, kind }) => e.style.removeProperty(kind === 'line' ? 'stroke-dashoffset' : 'opacity'))
+    if (all.some(a => a.kind === 'line')) drawing.value = false
   }
   return {
     el, at, finish,
-    hide() { all.forEach(({ e }) => { e.style.opacity = '0' }) },
+    hide() {
+      all.forEach(({ e, kind }) => { if (kind === 'line') e.style.strokeDashoffset = '1'; else e.style.opacity = '0' })
+      if (all.some(a => a.kind === 'line')) drawing.value = true
+    },
     play(delay = 0) {
-      anims = all.map(({ e, delay: d, kind }) => e.animate(
-        kind === 'rise' ? [{ opacity: 0, transform: `translateY(${T.rise}px)` }, { opacity: 1, transform: 'none' }]
+      anims = all.map(({ e, delay: d, kind, dur }) => e.animate(
+        kind === 'line' ? [{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }] : kind === 'rise' ? [{ opacity: 0, transform: `translateY(${T.rise}px)` }, { opacity: 1, transform: 'none' }]
           : [{ opacity: 0 }, { opacity: 1 }],
-        { duration: T.dur, delay: delay + d, easing: T.ease, fill: 'both' }))
+        { duration: dur ?? T.dur, delay: delay + d, easing: kind === 'line' ? DRAW.ease : T.ease, fill: 'both' }))
       Promise.all(anims.map(a => a.finished)).then(finish).catch(() => {})
     },
   }
@@ -223,6 +231,15 @@ useReveal(() => {
   const marks = (k: string) => [...q(`[data-pt="${k}"]`), ...q(`[data-knock="${k}"]`)]
   const place = (k: string, delay: number): Part[] => [{ els: marks(k), delay, kind: 'fade' }, { els: q(`[data-lbl="${k}"]`), delay, kind: 'rise' }]
   const airport = (k: string, delay: number): Part[] => [{ els: marks(k), delay, kind: 'fade' }, { els: q(`[data-lbl="${k}"]`), delay, kind: 'rise' }]
+  const draw = (k: 'AYT' | 'GZP'): Part[] => {
+    const D = DRAW[k], first = k === 'AYT' ? 0 : 1   /* algusnool = lennujaama ots */
+    return [
+      { els: q(`[data-draw="${k}"]`), delay: D.delay, kind: 'line', dur: D.dur },
+      { els: q(`[data-head="${k}-${first}"]`), delay: D.delay, kind: 'fade', dur: DRAW.head },
+      { els: q(`[data-time="${k}"]`), delay: D.delay + D.dur * DRAW.time, kind: 'fade', dur: 2 * DRAW.head },
+      { els: q(`[data-head="${k}-${1 - first}"]`), delay: D.delay + D.dur * DRAW.tip, kind: 'fade', dur: DRAW.head },
+    ]
+  }
   const lbl = (k: string) => q(`[data-lbl="${k}"]`)[0] as HTMLElement
   /* Alanya sündmus käivitub, kui täpp on käivitusjoonel; üksuse element on selle kõrgeim silt, et laadimisel juba ekraanil olev silt ei jääks peitu */
   const top = lbl('Alanya')
@@ -230,7 +247,7 @@ useReveal(() => {
   return [
     textUnit([title.value!]),
     mapUnit(lbl('Antalya'), MOTION.trigger, [...place('Antalya', 0), ...airport('AYT', S)]),
-    mapUnit(top, MOTION.trigger - gap / innerHeight, [...place('Alanya', 0), ...place('Oba', S), ...place('Gazipaşa', 2 * S), ...airport('GZP', 3 * S), { els: q('[data-route]'), delay: 3 * S, kind: 'fade' }]),
+    mapUnit(top, MOTION.trigger - gap / innerHeight, [...place('Alanya', 0), ...place('Oba', S), ...place('Gazipaşa', 2 * S), ...airport('GZP', 3 * S), ...draw('AYT'), ...draw('GZP')]),
   ]
 })
 </script>
@@ -251,13 +268,18 @@ useReveal(() => {
           <path class="coast" :d="map.coast" mask="url(#map-knock)" />
         </svg>
 
-        <svg class="route" data-route aria-hidden="true">
-          <template v-for="r in routes">
-            <path v-for="l in r.lines" :key="l" :d="l" class="route-l" />
-            <polygon v-for="p in r.heads" :key="p" :points="p" class="route-h" />
+        <svg class="route" aria-hidden="true">
+          <defs>
+            <mask v-for="(r, k) in routes" :id="`route-${k}`" :key="k" maskUnits="userSpaceOnUse" x="-200" y="-400" width="4000" height="3000">
+              <path :d="r.full" :data-draw="k" fill="none" stroke="white" stroke-width="12" pathLength="1" stroke-dasharray="1 1" />
+            </mask>
+          </defs>
+          <template v-for="(r, k) in routes" :key="k">
+            <g :mask="drawing ? `url(#route-${k})` : undefined"><path v-for="(l, i) in r.lines" :key="i" :d="l" class="route-l" /></g>
+            <polygon v-for="(p, i) in r.heads" :key="i" :data-head="`${k}-${i}`" :points="p" class="route-h" />
           </template>
         </svg>
-        <span v-for="r in ROUTES" :key="r.k" data-route :data-time="r.k" aria-hidden="true" class="t-map-time lbl route-t" :style="routes[r.k] ? { left: `${routes[r.k]!.text.x}px`, top: `${routes[r.k]!.text.y}px` } : { visibility: 'hidden' }">{{ r.time }}</span>
+        <span v-for="r in ROUTES" :key="r.k" :data-time="r.k" aria-hidden="true" class="t-map-time lbl route-t" :style="routes[r.k] ? { left: `${routes[r.k]!.text.x}px`, top: `${routes[r.k]!.text.y}px` } : { visibility: 'hidden' }">{{ r.time }}</span>
 
         <span class="t-map-sea lbl lbl--sea" :style="pct(pt('sea').x, pt('sea').y)">Mediterranean Sea</span>
 
