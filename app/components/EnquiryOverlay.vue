@@ -5,7 +5,7 @@
    Kaart lehe keskel, kogu leht (ka päis) tumendatud ja hägune. Fookus kaardil (mitte väljal), Esc / klõps
    tumendusel sulgeb, kerimine lukus, fookus tagasi avajale. X pealkirja real ja paigal; spellcheck välja,
    autofill-taust maha; sõnumiväli kasvab ainult nii palju, kui vaba ruumi jääb (põrand 2 rida).
-   ≤ 820 px kõrge: tihedamad vahed. ≤ 700 px lai: täisekraan, pealkiri X-i real.
+   ≤ 820 px kõrge: tihedamad vahed. ≤ 700 px lai: täisekraan, foto vormi kohal (kasutaja 2026-11-25).
    Avajad: iga [data-enquire] nupp lehel (päis, menüü, hero, kontakt). */
 const open = ref(false)
 const sent = ref(false)
@@ -75,6 +75,7 @@ onBeforeUnmount(() => { window.removeEventListener('keydown', onKey); document.r
     <div class="dim" @click="setOpen(false)" />
 
     <div ref="sheet" class="sheet" role="dialog" aria-modal="true" aria-labelledby="enq-title" tabindex="-1" :inert="!open">
+      <figure class="pic photo"><img src="/images/content/enquire.webp" alt="" width="1586" height="992" decoding="async" fetchpriority="low" /></figure>
       <div class="top">
         <h2 id="enq-title" class="t-h2">Enquire</h2>
         <button class="close" type="button" aria-label="Close" @click="setOpen(false)">
@@ -111,6 +112,7 @@ onBeforeUnmount(() => { window.removeEventListener('keydown', onKey); document.r
 
 <style scoped>
 p, figure, h2 { margin: 0; }
+.pic { display: none; }   /* ainult ≤ 700 px */
 a { color: inherit; }
 
 /* ---------- tumendus kogu lehe peal (ka päisel) ---------- */
@@ -175,9 +177,18 @@ a { color: inherit; }
 @media (max-width: 700px) {
   .sheet {
     inset: 0; margin: 0; width: auto; height: auto; max-height: none; translate: none;   /* täisekraan: tõus paljastaks alt lehte */
-    padding: var(--bar-top) var(--edge) calc(var(--gap) + env(safe-area-inset-bottom));
+    padding: 0 var(--edge) calc(var(--gap) + env(safe-area-inset-bottom));
   }
-  .scroll { margin-top: var(--gap); }
+  /* foto servast servani 16 : 10; lühemal ekraanil madalam, väga madalal kaob (vorm ei keri) */
+  .pic { display: block; flex: none; margin-inline: calc(-1 * var(--edge)); height: var(--enq-pic-h); max-height: var(--enq-pic-max); overflow: hidden; }
+  .pic img { width: 100%; height: 100%; object-fit: cover; object-position: 60% 62%; }
+  .top { padding-top: var(--enq-gap); }
+  /* X samas kohas ja sama suure ringiga nagu lehe Menu; fotota sulab ring lehe tooni */
+  .close {
+    position: absolute; z-index: 1; margin: 0; border-radius: 50%; background: var(--ground);
+    width: var(--menu-ring); height: var(--menu-ring); top: var(--bar-top); right: var(--bar-top);
+  }
+  .scroll { margin-top: var(--enq-gap); }
   .send { margin-top: 0; }
 }
 </style>
