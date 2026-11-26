@@ -124,6 +124,7 @@ onBeforeUnmount(() => { window.removeEventListener('scroll', onScroll); window.r
               <p class="t-body is-soft role">Real estate agent</p>
               <p class="reach title-lead">
                 <a class="t-body u-link" href="tel:+4745818574"><span>+47 458 18 574</span></a>
+                <a class="t-body u-link u-link--icon" href="https://wa.me/4745818574" target="_blank" rel="noopener noreferrer"><span>Message on WhatsApp</span><WaIcon /></a>
                 <a class="t-body u-link" href="mailto:contact@maresol.eu"><span>contact@maresol.eu</span></a>
               </p>
               <button class="send t-button u-link" type="button" data-enquire @click="setCard(false, false)"><span>Send an enquiry</span></button>
@@ -151,6 +152,7 @@ onBeforeUnmount(() => { window.removeEventListener('scroll', onScroll); window.r
             <p class="t-h3">Glenn Spydslaug</p>
             <p class="reach title-lead">
               <a class="t-body u-link" href="tel:+4745818574"><span>+47 458 18 574</span></a>
+              <a class="t-body u-link u-link--icon" href="https://wa.me/4745818574" target="_blank" rel="noopener noreferrer"><span>Message on WhatsApp</span><WaIcon /></a>
               <a class="t-body u-link" href="mailto:contact@maresol.eu"><span>contact@maresol.eu</span></a>
             </p>
           </div>

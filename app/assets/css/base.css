@@ -143,6 +143,9 @@ button:focus, a:focus, [role="button"]:focus { outline: none; box-shadow: none; 
   .u-link:hover { color: var(--accent); }
   .u-link:hover > span::after { transform: scaleX(0); transform-origin: right; }
 }
+/* ikooniga tekstilink (Message on WhatsApp): joon ainult sildi all, ikoon teksti värvis kõrval, hover sama mis .u-link */
+.u-link--icon { display: inline-flex; align-items: center; gap: var(--s-2); }
+.wa-icon { flex: none; width: var(--icon-inline); height: var(--icon-inline); }
 
 /* ---------- Navbari sildi rull (RollText.vue): tähed maskis üles, samad tähed alt asemele; hover vanemalt,
    aktiivsel ([aria-current]) mitte. ---------- */
