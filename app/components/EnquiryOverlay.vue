@@ -5,13 +5,33 @@
    Kaart lehe keskel, kogu leht (ka päis) tumendatud ja hägune. Fookus kaardil (mitte väljal), Esc / klõps
    tumendusel sulgeb, kerimine lukus, fookus tagasi avajale. X pealkirja real ja paigal; spellcheck välja,
    autofill-taust maha; sõnumiväli kasvab ainult nii palju, kui vaba ruumi jääb (põrand 2 rida).
+   Esimene väli „What are you looking for?” (kliendi ettepanek 2026-11-26, valikuline): hiirega oma loend lehe stiilis,
+   puutel brauseri select; „Choose one” ainult väljal. Nool suunaga, ilma pööramise animatsioonita.
    ≤ 820 px kõrge: tihedamad vahed. ≤ 700 px lai: täisekraan, foto vormi kohal (kasutaja 2026-11-25).
    Avajad: iga [data-enquire] nupp lehel (päis, menüü, hero, kontakt). */
 const open = ref(false)
 const sent = ref(false)
-const f = reactive({ name: '', contact: '', message: '' })
+const f = reactive({ intent: '', name: '', contact: '', message: '' })
+const intents = ['A holiday home for personal use', 'A home with rental income potential', 'An investment property', 'A permanent home in Alanya', 'Just exploring the possibilities']
 const err = reactive({ name: '', contact: '' })
 const sheet = ref<HTMLElement | null>(null)
+/* valikuloend: hiirega oma (lehe stiilis), puutel brauseri select */
+const fine = ref(false), lo = ref(false), ai = ref(0)
+const lb = ref<HTMLElement | null>(null), pickEl = ref<HTMLElement | null>(null), pickBtn = ref<HTMLElement | null>(null)
+const openList = () => { lo.value = true; ai.value = Math.max(0, intents.indexOf(f.intent)); nextTick(() => lb.value?.focus()) }
+const closeList = (focus = true) => { lo.value = false; if (focus) pickBtn.value?.focus() }
+const choose = (i: number) => { f.intent = intents[i]; closeList() }
+const btnKey = (e: KeyboardEvent) => { if (['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(e.key)) { e.preventDefault(); openList() } }
+const listKey = (e: KeyboardEvent) => {
+  const n = intents.length
+  if (e.key === 'ArrowDown') { e.preventDefault(); ai.value = Math.min(n - 1, ai.value + 1) }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); ai.value = Math.max(0, ai.value - 1) }
+  else if (e.key === 'Home') { e.preventDefault(); ai.value = 0 }
+  else if (e.key === 'End') { e.preventDefault(); ai.value = n - 1 }
+  else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); choose(ai.value) }
+  else if (e.key === 'Escape') { e.stopPropagation(); closeList() }   /* Esc sulgeb ainult loendi, mitte vormi */
+  else if (e.key === 'Tab') closeList(false)
+}
 const scroller = ref<HTMLElement | null>(null)
 const msg = ref<HTMLTextAreaElement | null>(null)
 let opener: HTMLElement | null = null
@@ -29,6 +49,7 @@ const fit = () => {
 }
 const setOpen = (v: boolean, from?: HTMLElement | null) => {
   open.value = v
+  lo.value = false
   document.documentElement.style.overflow = v ? 'hidden' : ''
   if (v) {
     /* menüüst avades on avaja sulgemisel inert → fookus menüü nupule */
@@ -38,7 +59,7 @@ const setOpen = (v: boolean, from?: HTMLElement | null) => {
   }
   else {
     opener?.focus()
-    setTimeout(() => { if (!open.value) { sent.value = false; Object.assign(f, { name: '', contact: '', message: '' }); Object.assign(err, { name: '', contact: '' }) } }, 300)
+    setTimeout(() => { if (!open.value) { sent.value = false; Object.assign(f, { intent: '', name: '', contact: '', message: '' }); Object.assign(err, { name: '', contact: '' }) } }, 300)
   }
 }
 const validContact = (s: string) => /^\S+@\S+\.\S+$/.test(s.trim()) || s.replace(/\D/g, '').length >= 7
@@ -53,18 +74,20 @@ const onKey = (e: KeyboardEvent) => {
   if (!open.value) return
   if (e.key === 'Escape') setOpen(false)
   if (e.key === 'Tab' && sheet.value) {   /* fookus jääb dialoogi sisse */
-    const els = [...sheet.value.querySelectorAll<HTMLElement>('a[href], button, input, textarea')].filter(el => el.offsetParent)
+    const els = [...sheet.value.querySelectorAll<HTMLElement>('a[href], button, input, select, textarea')].filter(el => el.offsetParent)
     const first = els[0], last = els[els.length - 1]
     if (e.shiftKey && (document.activeElement === first || document.activeElement === sheet.value)) { e.preventDefault(); last?.focus() }
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first?.focus() }
   }
 }
 const onClick = (e: MouseEvent) => {
+  if (lo.value && !pickEl.value?.contains(e.target as Node)) closeList(false)
   const b = (e.target as HTMLElement).closest<HTMLElement>('[data-enquire]')
   if (b) setOpen(true, b)
 }
 const onResize = () => { if (open.value) fit() }
 onMounted(() => {
+  fine.value = matchMedia('(hover: hover) and (pointer: fine)').matches
   window.addEventListener('keydown', onKey); document.addEventListener('click', onClick); window.addEventListener('resize', onResize)
 })
 onBeforeUnmount(() => { window.removeEventListener('keydown', onKey); document.removeEventListener('click', onClick); window.removeEventListener('resize', onResize); document.documentElement.style.overflow = '' })
@@ -74,7 +97,7 @@ onBeforeUnmount(() => { window.removeEventListener('keydown', onKey); document.r
   <div class="q" :class="{ 'is-open': open }">
     <div class="dim" @click="setOpen(false)" />
 
-    <div ref="sheet" class="sheet" role="dialog" aria-modal="true" aria-labelledby="enq-title" tabindex="-1" :inert="!open">
+    <div ref="sheet" class="sheet" :style="{ '--e': (err.name ? 1 : 0) + (err.contact ? 1 : 0) }" role="dialog" aria-modal="true" aria-labelledby="enq-title" tabindex="-1" :inert="!open">
       <figure class="pic photo"><img src="/images/content/enquire.webp" alt="" width="1586" height="992" decoding="async" fetchpriority="low" /></figure>
       <div class="top">
         <h2 id="enq-title" class="t-h2">Enquire</h2>
@@ -85,6 +108,24 @@ onBeforeUnmount(() => { window.removeEventListener('keydown', onKey); document.r
 
       <div ref="scroller" class="scroll">
         <form v-if="!sent" class="form" novalidate @submit.prevent="send">
+          <div class="field">
+            <label id="enq-intent-l" class="t-label" for="enq-intent">What are you looking for?</label>
+            <span ref="pickEl" class="pick" :class="{ 'is-open': lo }">
+              <!-- puutel brauseri / süsteemi valija; „Choose one" ainult väljal, mitte loendis -->
+              <select v-if="!fine" id="enq-intent" v-model="f.intent" class="t-body" name="intent" :class="{ 'is-empty': !f.intent }">
+                <option value="" disabled hidden>Choose one</option>
+                <option v-for="o in intents" :key="o" :value="o">{{ o }}</option>
+              </select>
+              <!-- hiirega oma loend lehe stiilis -->
+              <template v-else>
+                <button id="enq-intent" ref="pickBtn" type="button" class="pick-btn t-body" :class="{ 'is-empty': !f.intent }" aria-haspopup="listbox" :aria-expanded="lo" aria-labelledby="enq-intent-l enq-intent" @click="lo ? closeList() : openList()" @keydown="btnKey">{{ f.intent || 'Choose one' }}</button>
+                <ul ref="lb" class="pick-list" :class="{ 'is-on': lo }" role="listbox" tabindex="-1" aria-labelledby="enq-intent-l" :aria-activedescendant="lo ? `enq-o${ai}` : undefined" @keydown="listKey">
+                  <li v-for="(o, i) in intents" :id="`enq-o${i}`" :key="o" class="t-body" role="option" :aria-selected="f.intent === o" :class="{ 'is-active': ai === i }" @mousemove="ai = i" @click="choose(i)">{{ o }}</li>
+                </ul>
+              </template>
+              <svg class="chev" viewBox="0 0 12 8" aria-hidden="true"><path :d="lo ? 'M1 6.5 6 1.5 11 6.5' : 'M1 1.5 6 6.5 11 1.5'" /></svg>
+            </span>
+          </div>
           <div class="field" :class="{ 'is-error': err.name }">
             <label class="t-label" for="enq-name">Name</label>
             <input id="enq-name" v-model="f.name" class="t-body" type="text" name="name" autocomplete="name" spellcheck="false" :aria-invalid="err.name ? 'true' : undefined" :aria-describedby="err.name ? 'enq-name-err' : undefined" @input="err.name = ''">
@@ -145,14 +186,37 @@ a { color: inherit; }
 .form { display: flex; flex-direction: column; gap: var(--gap); }
 .field { display: flex; flex-direction: column; }
 .field label { color: var(--soft); }
-.field input, .field textarea {
+.field input, .field textarea, .field select {
   width: 100%; margin-top: var(--s-2); padding: var(--s-2) 0;
   border: 0; border-bottom: var(--hair) solid var(--rule); border-radius: 0;
   background: none; color: var(--ink); outline: none; resize: none;
   transition: border-color var(--dur-ui) var(--ease-ui);
 }
-.field input:focus, .field textarea:focus, .is-error input { border-bottom-color: var(--ink); }
+.field input:focus, .field textarea:focus, .field select:focus, .is-error input { border-bottom-color: var(--ink); }
 .field textarea { display: block; overflow: auto; }
+/* valik: brauseri oma select (telefonis süsteemi valija), kujult nagu teised väljad */
+.pick { position: relative; display: block; }
+.field select { appearance: none; -webkit-appearance: none; padding-right: calc(var(--icon) + var(--s-2)); cursor: pointer; }
+.field select.is-empty, .pick-btn.is-empty { color: var(--soft); }
+.pick-btn {
+  display: block; width: 100%; margin-top: var(--s-2); padding: var(--s-2) calc(var(--icon) + var(--s-2)) var(--s-2) 0; text-align: left;
+  border-bottom: var(--hair) solid var(--rule); color: var(--ink); cursor: pointer; transition: border-color var(--dur-ui) var(--ease-ui);
+}
+.pick-btn:focus { outline: none; }
+.pick.is-open .pick-btn, .pick-btn:hover { border-bottom-color: var(--ink); }
+/* loend välja all: lehe pind + peenjoon nagu kontaktikaart; aktiivne rida surface, valitud aktsent */
+.pick-list {
+  position: absolute; z-index: calc(var(--z-content) + 1); top: 100%; left: 0; right: 0; margin: 0; padding: var(--s-2) 0; list-style: none;
+  background: var(--ground); border: var(--hair) solid var(--rule);
+  opacity: 0; visibility: hidden; transition: opacity var(--dur-ui) var(--ease-ui), visibility 0s linear var(--dur-ui);
+}
+.pick-list.is-on { opacity: 1; visibility: visible; transition: opacity var(--dur-ui) var(--ease-ui), visibility 0s linear; }
+.pick-list:focus { outline: none; }
+.pick-list li { padding: var(--s-2) var(--s-3); cursor: pointer; transition: background-color var(--dur-line) var(--ease-ui), color var(--dur-line) var(--ease-ui); }
+.pick-list li.is-active { background: var(--surface); }
+.pick-list li[aria-selected="true"] { color: var(--accent); }
+.field select option { color: var(--ink); }
+.chev { position: absolute; right: 0; top: calc(50% + var(--s-2) / 2); translate: 0 -50%; width: var(--chev-w); height: var(--chev-h); fill: none; stroke: var(--ink); stroke-width: 1.5; pointer-events: none; }   /* välja keskel */
 .err { margin-top: var(--s-2); color: var(--ink); }
 /* brauseri autofill-taust maha (vormi taust = ground) */
 .field input:-webkit-autofill, .field input:-webkit-autofill:hover, .field input:-webkit-autofill:focus, .field textarea:-webkit-autofill {
@@ -180,7 +244,7 @@ a { color: inherit; }
     padding: 0 var(--edge) calc(var(--gap) + env(safe-area-inset-bottom));
   }
   /* foto servast servani 16 : 10; lühemal ekraanil madalam, väga madalal kaob (vorm ei keri) */
-  .pic { display: block; flex: none; margin-inline: calc(-1 * var(--edge)); height: var(--enq-pic-h); max-height: var(--enq-pic-max); overflow: hidden; }
+  .pic { display: block; flex: none; margin-inline: calc(-1 * var(--edge)); height: min(var(--enq-pic-w), 100svh - var(--enq-form) - var(--e, 0) * var(--enq-err)); max-height: var(--enq-pic-max); overflow: hidden; transition: height var(--dur-ui) var(--ease-ui); }   /* veateated võtavad ruumi fotolt */
   .pic img { width: 100%; height: 100%; object-fit: cover; object-position: 60% 62%; }
   .top { padding-top: var(--enq-gap); }
   /* X samas kohas ja sama suure ringiga nagu lehe Menu; fotota sulab ring lehe tooni */

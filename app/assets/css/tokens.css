@@ -108,10 +108,15 @@
   --menu-card: 34rem;                                          /* menüükaardi max laius (demo A) */
   --blur: 6px;                                                 /* overlay-tumenduse hägu (backdrop-filter) */
   --sheet-w: 36rem;                                           /* päringukaardi / -paneeli max laius */
-  /* päringuvorm ≤ 700 px: foto vormi kohal. --enq-form = vorm koos veateadetega; alla 8rem jääv foto kaob */
-  --enq-form: 31rem;
-  --enq-pic-h: min(62.5vw, 100svh - var(--enq-form));
-  --enq-pic-max: max(0px, (100svh - var(--enq-form) - 8rem) * 99);
+  /* päringuvorm ≤ 700 px: foto vormi kohal (16 : 10, lühemal ekraanil madalam). --enq-form = tühi vorm, iga veateade võtab
+     fotolt --enq-err; foto kaob, kui jääks alla --enq-pic-min (kasutaja 2026-11-26: foto hoida, vahesid mitte vähendada) */
+  --enq-form: 32.5rem;
+  --enq-err: 1.8rem;
+  --enq-pic-w: 62.5vw;
+  --enq-pic-min: 5rem;
+  --enq-pic-max: max(0px, (100svh - var(--enq-form) - var(--enq-pic-min)) * 99);
+  --chev-w: .75rem;                                            /* valikuvälja nool */
+  --chev-h: .5rem;
   --enq-gap: min(var(--head-gap), 4svh);                       /* foto → pealkiri → väljad */
   --btn-h: clamp(3.25rem, 3.6vw, 4.125rem);
   --btn-px: clamp(3em, 4vw, 6.5em);
